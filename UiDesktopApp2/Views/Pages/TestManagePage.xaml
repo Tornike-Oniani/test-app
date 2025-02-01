@@ -1,0 +1,123 @@
+﻿<Page x:Class="UiDesktopApp2.Views.Pages.TestManagePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:UiDesktopApp2.Views.Pages"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:helpers="clr-namespace:UiDesktopApp2.Helpers"
+      mc:Ignorable="d" 
+      d:DataContext="{d:DesignInstance local:TestManagePage,
+                                 IsDesignTimeCreatable=False}"
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="TestPage"
+      ui:NavigationView.HeaderContent="{Binding ViewModel.GlobalState.TestToManage.Name}"
+      >
+
+    <Page.Resources>
+        <helpers:SubtractConverter x:Key="Subtract" />
+    </Page.Resources>
+    
+    <Grid Margin="0 0 0 12">
+    <Grid.RowDefinitions>
+        <RowDefinition Height="*" />
+        <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+    <ui:ListView            
+        ItemsSource="{Binding ViewModel.GlobalState.TestToManage.ImageSets}"
+        AlternationCount="50"
+        >
+        <ui:ListView.Template>
+            <ControlTemplate TargetType="{x:Type ui:ListView}">
+                <Grid>
+                    <Border
+                        BorderThickness="2 0 0 0"
+                        BorderBrush="{ui:ThemeResource AccentTextFillColorPrimaryBrush}"
+                        Height="{Binding ElementName=Presenter, Path=ActualHeight, Converter={StaticResource Subtract}, ConverterParameter=65}"
+                        VerticalAlignment="Top"
+                        Margin="16 33 0 0"
+                        />
+                    <ScrollViewer 
+                        x:Name="PART_ScrollViewer"
+                        CanContentScroll="True"
+                        VerticalAlignment="Top"
+                        >
+                        <ItemsPresenter 
+                            VerticalAlignment="Top"
+                            x:Name="Presenter"
+                            />
+                    </ScrollViewer>
+                </Grid>
+            </ControlTemplate>
+        </ui:ListView.Template>
+        <ui:ListView.ItemTemplate>
+            <DataTemplate>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <!--Number-->
+                    <Grid
+                        Margin="0 0 16 0"
+                        Grid.Column="0"
+                        >
+                        <Ellipse 
+                            Width="25" 
+                            Height="25" 
+                            Fill="{ui:ThemeResource AccentTextFillColorPrimaryBrush}" 
+                            />
+                        <TextBlock 
+                            Text="{Binding RelativeSource={RelativeSource AncestorType=ListViewItem}, Path=(ItemsControl.AlternationIndex)}"
+                            FontSize="14"
+                            Foreground="White"
+                            HorizontalAlignment="Center" 
+                            VerticalAlignment="Center" 
+                            />
+                        </Grid>
+                        <!--List of images-->
+                        <ui:ListView 
+                            ItemsSource="{Binding Images}"
+                            Grid.Column="1"
+                            >
+                            <ui:ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ui:ListView.ItemsPanel>
+                            <ui:ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel>
+                                        <ui:Image
+                                            Height="50"
+                                            Source="{Binding Source}"
+                                            />
+                                        <TextBlock
+                                            Text="{Binding Name}"
+                                            HorizontalAlignment="Center"
+                                            TextAlignment="Center"
+                                            />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ui:ListView.ItemTemplate>
+                        </ui:ListView>
+                    <!--Add image button-->
+                    <ui:Button
+                        Content="Add Image"
+                        Command="{Binding AddImageCommand}"
+                        Grid.Column="2"
+                        />
+                </Grid>
+            </DataTemplate>
+        </ui:ListView.ItemTemplate>
+    </ui:ListView>
+    <ui:Button
+        Content="Add Set"
+        Command="{Binding ViewModel.GlobalState.TestToManage.AddSetCommand}"
+        Appearance="Primary"
+        HorizontalAlignment="Stretch"
+        Grid.Row="1"
+        />
+</Grid>
+</Page>

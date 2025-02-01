@@ -26,7 +26,7 @@ namespace UiDesktopApp2.Views.Pages
         public ConfigurationPage(ConfigurationViewModel viewModel)
         {
             this.ViewModel = viewModel;
-            DataContext = this;
+            this.DataContext = this;
             InitializeComponent();
         }
     }

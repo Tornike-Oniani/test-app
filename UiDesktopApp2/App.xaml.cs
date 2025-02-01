@@ -6,6 +6,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Threading;
 using UiDesktopApp2.DataAccess;
+using UiDesktopApp2.Helpers;
 using UiDesktopApp2.Services;
 using UiDesktopApp2.ViewModels.Pages;
 using UiDesktopApp2.ViewModels.Windows;
@@ -31,6 +32,7 @@ namespace UiDesktopApp2
             .ConfigureServices((context, services) =>
             {
                 services.AddHostedService<ApplicationHostService>();
+                services.AddDbContext<ApplicationDbContext>();
 
                 // Page resolver service
                 services.AddSingleton<IPageService, PageService>();
@@ -44,6 +46,12 @@ namespace UiDesktopApp2
                 // Service containing navigation, same as INavigationWindow... but without window
                 services.AddSingleton<INavigationService, NavigationService>();
 
+                // Dialog service
+                services.AddSingleton<IContentDialogService, ContentDialogService>();
+
+                // Global state
+                services.AddSingleton<GlobalState>();
+
                 // Main window with navigation
                 services.AddSingleton<INavigationWindow, MainWindow>();
                 services.AddSingleton<MainWindowViewModel>();
@@ -56,6 +64,10 @@ namespace UiDesktopApp2
                 services.AddSingleton<SettingsViewModel>();
                 services.AddSingleton<ConfigurationPage>();
                 services.AddSingleton<ConfigurationViewModel>();
+                services.AddTransient<TestManagePage>();
+                services.AddTransient<TestManageViewModel>();
+                services.AddTransient<TestRunPage>();
+                services.AddTransient<TestRunViewModel>();
             }).Build();
 
         /// <summary>

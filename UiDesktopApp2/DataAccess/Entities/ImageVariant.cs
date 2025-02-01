@@ -7,12 +7,15 @@ using System.Threading.Tasks;
 
 namespace UiDesktopApp2.DataAccess.Entities
 {
-    public class ImageSet
+    public class ImageVariant
     {
         [Key]
         public int Id { get; set; }
-        public int TestId { get; set; }
-        public Test Test { get; set; }
-        public List<ImageVariant> ImageVariants { get; set; }
+        [Required]
+        public string Name { get; set; }
+        [Required]
+        public string Source { get; set; }
+        public int ImageSetId { get; set; }
+        public ImageSet ImageSet { get; set; }
     }
 }

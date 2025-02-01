@@ -33,6 +33,7 @@
     <None Remove="Assets\5.png" />
     <None Remove="Assets\wpfui-icon-256.png" />
     <None Remove="Assets\wpfui-icon-1024.png" />
+    <None Remove="results.db" />
   </ItemGroup>
 
   <ItemGroup>
@@ -56,6 +57,8 @@
     </Resource>
     <Resource Include="Assets\wpfui-icon-256.png" />
     <Resource Include="Assets\wpfui-icon-1024.png" />
+    <Resource Include="results.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
-
 </Project>
