@@ -1,7 +1,6 @@
-﻿using UiDesktopApp2.DataAccess;
-using UiDesktopApp2.DataAccess.Entities;
-using UiDesktopApp2.Helpers;
+﻿using UiDesktopApp2.Helpers;
 using UiDesktopApp2.Models;
+using UiDesktopApp2.Services;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 using Wpf.Ui.Extensions;
@@ -13,7 +12,7 @@ namespace UiDesktopApp2.ViewModels.Pages
         #region Private memebers
         private readonly INavigationService _navigationService;
         private readonly IContentDialogService _contentDialogService;
-        private readonly ApplicationDbContext _context;
+        private readonly TestRepository _testRepo;
         #endregion
 
         #region Observable properties
@@ -30,13 +29,13 @@ namespace UiDesktopApp2.ViewModels.Pages
             (
                 INavigationService navigationService, 
                 IContentDialogService contentDialogService,
-                ApplicationDbContext context,
+                TestRepository testRepo,
                 GlobalState globalState
             )
         {
             _navigationService = navigationService;
             _contentDialogService = contentDialogService;
-            _context = context;
+            _testRepo = testRepo;
             GlobalState = globalState;
         }
         #endregion
@@ -58,18 +57,20 @@ namespace UiDesktopApp2.ViewModels.Pages
             // If user clicked yes and input was valid add the new test
             if (result == ContentDialogResult.Primary && !String.IsNullOrEmpty(NewTestName))
             {
-                // Add test to database
-                _context.Add(new Test()
+
+                var testDto = new TestDTO()
                 {
                     Name = NewTestName
-                });
-                await _context.SaveChangesAsync();
+                };
+
+                // Add test to database and retrieve its id
+                int id = await _testRepo.CreateTest(testDto);
+
+                // Set the id to our local copy in runtime memory
+                testDto.Id = id;
 
                 // Add test to global state
-                GlobalState.Tests.Add(new TestDTO()
-                {
-                    Name = NewTestName
-                });
+                GlobalState.Tests.Add(testDto);
             }
 
             NewTestName = String.Empty;

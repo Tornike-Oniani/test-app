@@ -4,6 +4,7 @@ using System.Windows.Media.Imaging;
 using UiDesktopApp2.DataAccess;
 using UiDesktopApp2.Helpers;
 using UiDesktopApp2.Models;
+using UiDesktopApp2.Services;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 
@@ -12,7 +13,7 @@ namespace UiDesktopApp2.ViewModels.Pages
     public partial class DashboardViewModel : ObservableObject, INavigationAware
     {
         private readonly INavigationService _navigationService;
-        private readonly ApplicationDbContext _context;
+        private readonly TestRepository _testRepo;
         private bool _isInitialized = false;
 
         public GlobalState GlobalState { get; set; }
@@ -20,10 +21,10 @@ namespace UiDesktopApp2.ViewModels.Pages
         [ObservableProperty]
         private TestDTO _selectedTest;
 
-        public DashboardViewModel(GlobalState globalState, INavigationService navigationService, ApplicationDbContext context)
+        public DashboardViewModel(GlobalState globalState, INavigationService navigationService, TestRepository testRepo)
         {
             _navigationService = navigationService;
-            _context = context;
+            _testRepo = testRepo;
             GlobalState = globalState;
         }        
 
@@ -49,15 +50,7 @@ namespace UiDesktopApp2.ViewModels.Pages
 
         private async Task Initialize()
         {
-            List<TestDTO> tests = await _context.Tests
-                .Include(t => t.ImageSets)
-                .ThenInclude(ims => ims.ImageVariants)
-                .Select(t => new TestDTO()
-                                    {
-                                        Id = t.Id,
-                                        Name = t.Name
-                                    })
-                .ToListAsync();
+            List<TestDTO> tests = await _testRepo.GetAllTestsAsync();
 
             GlobalState.Tests.Clear();
             foreach (var test in tests)

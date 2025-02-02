@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace UiDesktopApp2.DataAccess.Entities
 {
-    public class Person
+    public class ResultImageVariantTime
     {
         [Key]
         public int Id { get; set; }
-        [Required]
-        public string? FirstName { get; set; }
-        public string? LastName { get; set; }
-        public List<Result>? Results { get; set; }
+        public int ImageVariantId { get; set; }
+        public int Seconds { get; set; }
+        public int ResultId { get; set; }
+        public Result Result { get; set; }
     }
 }

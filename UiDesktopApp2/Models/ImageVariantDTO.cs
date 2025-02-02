@@ -9,7 +9,8 @@ namespace UiDesktopApp2.Models
 {
     public class ImageVariantDTO
     {
+        public int Id { get; set; }
         public string Name { get; set; }
-        public ImageSource Source { get; set; }
+        public string Source { get; set; }
     }
 }

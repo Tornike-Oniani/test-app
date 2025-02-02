@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace UiDesktopApp2.Models
 {
-    public partial class TestDTO
+    public class TestDTO
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -16,12 +16,6 @@ namespace UiDesktopApp2.Models
         public TestDTO()
         {
             this.ImageSets = new ObservableCollection<ImageSetDTO>();
-        }
-
-        [RelayCommand]
-        private void OnAddSet()
-        {
-            this.ImageSets.Add(new ImageSetDTO());
         }
     }
 }

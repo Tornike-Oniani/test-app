@@ -1,25 +1,44 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using System.Windows.Documents;
 using UiDesktopApp2.DataAccess;
 using UiDesktopApp2.DataAccess.Entities;
 using UiDesktopApp2.Models;
 
 namespace UiDesktopApp2.Services
 {
-    public class TestRepository(ApplicationDbContext context)
+    public class TestRepository(ApplicationDbContext context, IMapper mapper)
     {
-        public Task CreateTest(TestDTO test)
+        public async Task<List<TestDTO>> GetAllTestsAsync()
         {
-            context.Tests.Add(new Test()
+            var tests = await context.Tests
+                .Include(t => t.ImageSets)
+                    .ThenInclude(s => s.ImageVariants)
+                .ToListAsync();
+
+            return mapper.Map<List<TestDTO>>(tests);
+        }
+
+        public async Task<int> CreateTest(TestDTO test)
+        {
+            var newTest = new Test()
             {
                 Name = test.Name,
-            });
+            };
 
-            return context.SaveChangesAsync();
+            context.Tests.Add(newTest);
+
+            await context.SaveChangesAsync();
+            return newTest.Id;
+        }
+
+        public async Task UpdateTest(TestDTO testDto)
+        {
+            var existingTest = await context.Tests.FindAsync(testDto.Id);
+
+
+            var test = mapper.Map(testDto, existingTest);
+            await context.SaveChangesAsync();
         }
     }
 }

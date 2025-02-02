@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -49,8 +50,23 @@ namespace UiDesktopApp2
                 // Dialog service
                 services.AddSingleton<IContentDialogService, ContentDialogService>();
 
+                // Automapper
+                services.AddSingleton<IMapper>(sp =>
+                {
+                    var config = new MapperConfiguration(cfg =>
+                    {
+                        cfg.AddProfile<MappingProfile>(); // Add your AutoMapper profile
+                    });
+
+                    return config.CreateMapper();
+                });
+
                 // Global state
                 services.AddSingleton<GlobalState>();
+
+                // Repositories
+                services.AddScoped<TestRepository>();
+                services.AddScoped<PersonRepository>();
 
                 // Main window with navigation
                 services.AddSingleton<INavigationWindow, MainWindow>();
@@ -64,6 +80,8 @@ namespace UiDesktopApp2
                 services.AddSingleton<SettingsViewModel>();
                 services.AddSingleton<ConfigurationPage>();
                 services.AddSingleton<ConfigurationViewModel>();
+                services.AddSingleton<SubjectsPage>();
+                services.AddSingleton<SubjectsViewModel>();
                 services.AddTransient<TestManagePage>();
                 services.AddTransient<TestManageViewModel>();
                 services.AddTransient<TestRunPage>();

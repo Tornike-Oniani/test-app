@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:UiDesktopApp2.Views.Pages"
+      xmlns:helpers="clr-namespace:UiDesktopApp2.Helpers"
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       mc:Ignorable="d" 
       d:DataContext="{d:DesignInstance local:TestRunPage,
@@ -13,13 +14,17 @@
       ui:NavigationView.HeaderContent="{Binding ViewModel.CurrentTest.Name}"
       >
 
+    <Page.Resources>
+        <helpers:StringToImageSourceConverter x:Key="StringToImageSource" />
+    </Page.Resources>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <ui:Image 
-            Source="{Binding ViewModel.CurrentImageSource}"
+            Source="{Binding ViewModel.CurrentImageSource, Converter={StaticResource StringToImageSource}}"
             Grid.Row="0"
             />
         <StackPanel
@@ -39,6 +44,9 @@
                 Appearance="Primary"
                 Width="100"
                 Margin="0 0 48 0"
+                />
+            <TextBlock
+                Text="{Binding ViewModel.CountdownText}"
                 />
         </StackPanel>
     </Grid>

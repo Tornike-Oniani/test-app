@@ -105,7 +105,8 @@
                     <!--Add image button-->
                     <ui:Button
                         Content="Add Image"
-                        Command="{Binding AddImageCommand}"
+                        Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Page}}, Path=DataContext.ViewModel.AddImageVariantCommand}"
+                        CommandParameter="{Binding}"
                         Grid.Column="2"
                         />
                 </Grid>
@@ -114,7 +115,7 @@
     </ui:ListView>
     <ui:Button
         Content="Add Set"
-        Command="{Binding ViewModel.GlobalState.TestToManage.AddSetCommand}"
+        Command="{Binding ViewModel.AddSetCommand}"
         Appearance="Primary"
         HorizontalAlignment="Stretch"
         Grid.Row="1"
