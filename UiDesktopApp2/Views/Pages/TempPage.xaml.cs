@@ -13,21 +13,21 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using UiDesktopApp2.ViewModels.Pages;
-using Wpf.Ui.Controls;
 
 namespace UiDesktopApp2.Views.Pages
 {
     /// <summary>
-    /// Interaction logic for ConfigurationPage.xaml
+    /// Interaction logic for TempPage.xaml
     /// </summary>
-    public partial class ConfigurationPage : INavigableView<ConfigurationViewModel>
+    public partial class TempPage : Page
     {
-        public ConfigurationViewModel ViewModel { get; }
 
-        public ConfigurationPage(ConfigurationViewModel viewModel)
+        public TempViewModel ViewModel { get; }
+
+        public TempPage(TempViewModel viewModel)
         {
-            this.ViewModel = viewModel;
-            this.DataContext = this;
+            ViewModel = viewModel;
+            DataContext = this;
             InitializeComponent();
         }
     }

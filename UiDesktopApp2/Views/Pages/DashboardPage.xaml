@@ -17,11 +17,39 @@
     mc:Ignorable="d">
 
     <Grid>
-        <Border
+        <ui:Card
             VerticalAlignment="Center"
             HorizontalAlignment="Center"
+            Padding="24 24 24 24"
             >
             <StackPanel>
+                <ui:TextBlock
+                    Text="Choose a subject to test"
+                    TextAlignment="Center"
+                    Margin="0 0 0 6"
+                    />
+                <ComboBox
+                    ItemsSource="{Binding ViewModel.GlobalState.Subjects}"
+                    SelectedItem="{Binding ViewModel.GlobalState.SubjectToTest}"
+                    MinWidth="150"
+                    Margin="0 0 0 12"
+                    >
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel
+                                Orientation="Horizontal"
+                                >
+                                <TextBlock
+                                    Text="{Binding FirstName}"
+                                    Margin="0 0 6 0"
+                                    />
+                                <TextBlock
+                                    Text="{Binding LastName}"
+                                    />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
                 <ui:TextBlock
                     Text="Choose a test to run"
                     TextAlignment="Center"
@@ -42,6 +70,6 @@
                     HorizontalAlignment="Stretch"
                     />
             </StackPanel>
-        </Border>
+        </ui:Card>
     </Grid>
 </Page>

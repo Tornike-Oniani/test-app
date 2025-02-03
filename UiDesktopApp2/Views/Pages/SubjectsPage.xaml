@@ -12,7 +12,7 @@
       ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
       ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-      Title="Subjects">
+      Title="SubjectsPage">
 
     <Grid x:Name="MyGrid">
         <Grid.Resources>
@@ -20,6 +20,11 @@
                 x:Key="DialogContent" 
                 Width="350"
                 >
+                <Label
+                    Margin="0 0 0 6"
+                    >
+                    Create new subject
+                </Label>
                 <ui:TextBox
                     PlaceholderText="First name..."
                     Text="{Binding DataContext.ViewModel.NewPersonFirstName, Source={x:Reference Name=MyGrid}}"
@@ -51,9 +56,11 @@
                         <ui:GridView>
                             <GridViewColumn
                                 DisplayMemberBinding="{Binding FirstName}"
+                                Width="100"
                                 Header="First Name" />
                             <GridViewColumn
                                 DisplayMemberBinding="{Binding LastName}"
+                                Width="100"
                                 Header="Last Name" />
                         </ui:GridView>
                     </ui:ListView.View>

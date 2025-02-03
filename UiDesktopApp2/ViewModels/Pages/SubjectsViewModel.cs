@@ -24,7 +24,7 @@ namespace UiDesktopApp2.ViewModels.Pages
 
         #region Commands
         [RelayCommand]
-        private async void OnPersonAdd(object content)
+        private async Task OnPersonAdd(object content)
         {
             ContentDialogResult result = await contentDialogService.ShowSimpleDialogAsync(
                 new SimpleContentDialogCreateOptions()
@@ -39,22 +39,23 @@ namespace UiDesktopApp2.ViewModels.Pages
             // If user clicked yes and input was valid add the new test
             if (result == ContentDialogResult.Primary && IsPersonFormValid())
             {
-                var person = new Person()
+                var personDto = new PersonDTO()
                 {
                     FirstName = NewPersonFirstName,
                     LastName = NewPersonLastName,
                 };
 
                 // Add test to database and retrieve its id
-                await personRepo.CreatePerson(person);
+                await personRepo.CreatePerson(personDto);
 
                 // Add test to global state
-                GlobalState.Subjects.Add(person);
+                GlobalState.Subjects.Add(personDto);
             }
 
             ClearForm();
         }
         #endregion
+
 
         #region Private helpers
         private bool IsPersonFormValid()

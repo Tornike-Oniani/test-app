@@ -29,6 +29,19 @@ namespace UiDesktopApp2.Services
 
             CreateMap<ImageVariant, ImageVariantDTO>();
 
+            CreateMap<Person, PersonDTO>()
+            .ForMember(dest => dest.Results, opt => opt.MapFrom((src, _, _, context) =>
+                src.Results != null ? src.Results.Select(x => context.Mapper.Map<ResultDTO>(x)).ToList()
+                                    : new List<ResultDTO>()));
+
+            CreateMap<Result, ResultDTO>()
+                .ForMember(dest => dest.ImageSetTimes, opt => opt.MapFrom((src, _, _, context) =>
+                    src.ImageSetTimes != null ? src.ImageSetTimes.Select(x => context.Mapper.Map<ResultImageSetTimeDTO>(x)).ToList()
+                                              : new List<ResultImageSetTimeDTO>()))
+                .ForMember(dest => dest.VariantTimes, opt => opt.MapFrom((src, _, _, context) =>
+                    src.ImageVariantTimes != null ? src.ImageVariantTimes.Select(x => context.Mapper.Map<ResultImageVariantTimeDTO>(x)).ToList()
+                                                  : new List<ResultImageVariantTimeDTO>()));
+
             // DTO -> Entity (for saving back to DB)
             CreateMap<TestDTO, Test>()
                 .ForMember(dest => dest.ImageSets, opt => opt.MapFrom(src => src.ImageSets));
@@ -37,6 +50,16 @@ namespace UiDesktopApp2.Services
                 .ForMember(dest => dest.ImageVariants, opt => opt.MapFrom(src => src.Images));
 
             CreateMap<ImageVariantDTO, ImageVariant>();
+
+            CreateMap<PersonDTO, Person>()
+           .ForMember(dest => dest.Results, opt => opt.MapFrom(src => src.Results));
+
+            CreateMap<ResultDTO, Result>()
+                .ForMember(dest => dest.ImageSetTimes, opt => opt.MapFrom(src => src.ImageSetTimes))
+                .ForMember(dest => dest.ImageVariantTimes, opt => opt.MapFrom(src => src.VariantTimes));
+
+            CreateMap<ResultImageSetTimeDTO, ResultImageSetTime>();
+            CreateMap<ResultImageVariantTimeDTO, ResultImageVariantTime>();
         }
     }
 }

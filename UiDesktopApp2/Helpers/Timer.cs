@@ -59,9 +59,9 @@ namespace UiDesktopApp2.Helpers
         // Reset the seconds and restart the timer
         public void Restart()
         {
-            _timer.Stop();
+            //_timer.Stop();
             Seconds = _initialSeconds;
-            _timer.Start();
+            //_timer.Start();
         }
         #endregion
 
@@ -83,7 +83,7 @@ namespace UiDesktopApp2.Helpers
             else
             {
                 // Stop the timer and invoke complete action if it was passeed
-                _timer.Stop();
+                //_timer.Stop();
                 if (Completed != null)
                 {
                     Completed();

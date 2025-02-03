@@ -9,7 +9,7 @@ namespace UiDesktopApp2.DataAccess.Entities
 {
     /// <summary>
     /// რამდენი დრო დახარჯა თითო სურათის ვარიანტზე
-    /// რამდენი დრო დაიხარჯა სურათის ამოცნობაზე
+    /// რამდენი დრო დაიხარჯა სურათის ნაკრებზე
     /// ამოუცნო თუ არა სურათი
     /// რამდენჯერ გამოტოვა სურათის ვარიანტი
     /// </summary>
@@ -18,8 +18,10 @@ namespace UiDesktopApp2.DataAccess.Entities
         [Key]
         public int Id { get; set; }
         public int PersonId { get; set; }
+        public Person Person { get; set; }
         public int TestId { get; set; }
-        List<ResultImageSetTime> ImageSetTimes { get; set; }
-        List<ResultImageVariantTime> ImageVariantTimes { get; set; }
+        public Test Test { get; set; }
+        public List<ResultImageSetTime> ImageSetTimes { get; set; }
+        public List<ResultImageVariantTime> ImageVariantTimes { get; set; }
     }
 }

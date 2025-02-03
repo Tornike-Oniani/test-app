@@ -14,6 +14,9 @@ namespace UiDesktopApp2.ViewModels.Pages
         private int setIndex = 0;
         private int imageIndex = 0;
         private Timer _timer;
+        private int _variantTime = 0;
+        private int _imageSetTime = 0;
+        private ResultDTO _result;
         #endregion
 
         #region Observable properties
@@ -29,14 +32,20 @@ namespace UiDesktopApp2.ViewModels.Pages
         public TestRunViewModel(GlobalState globalState)
         {
             _globalState = globalState;
-            _currentTest = _globalState.TestToRun!;
-            CurrentImageSource = GetDisplayImageSource();
-            _timer = new Timer(2)
+            _currentTest = _globalState.TestToRun;
+            _result = new ResultDTO()
+            {
+                ImageSetTimes = new List<ResultImageSetTimeDTO>(),
+                VariantTimes = new List<ResultImageVariantTimeDTO>()
+            };
+            _globalState.SubjectToTest.Results.Add(_result);
+            _timer = new Timer(10)
             {
                 Tick = TimerTick,
                 Completed = TimerComplete
             };
             _timer.Start();
+            CurrentImageSource = GetDisplayImageSource();
         }
         #endregion
 
@@ -44,6 +53,7 @@ namespace UiDesktopApp2.ViewModels.Pages
         [RelayCommand]
         private void OnSkip()
         {
+            RestartTimer();
             SetNextImage();
         }
         #endregion
@@ -61,6 +71,10 @@ namespace UiDesktopApp2.ViewModels.Pages
             }
             else if (IsNextSetAvailable())
             {
+                _result.ImageSetTimes.Add(new ResultImageSetTimeDTO()
+                {
+                    Seconds = _imageSetTime
+                });
                 imageIndex = 0;
                 setIndex++;
             }
@@ -86,7 +100,11 @@ namespace UiDesktopApp2.ViewModels.Pages
         }
         private void TimerComplete()
         {
+            RestartTimer();
             SetNextImage();
+        }
+        private void RestartTimer()
+        {
             _timer.Restart();
         }
         #endregion

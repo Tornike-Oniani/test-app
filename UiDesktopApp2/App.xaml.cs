@@ -82,6 +82,8 @@ namespace UiDesktopApp2
                 services.AddSingleton<ConfigurationViewModel>();
                 services.AddSingleton<SubjectsPage>();
                 services.AddSingleton<SubjectsViewModel>();
+                services.AddSingleton<TempPage>();
+                services.AddSingleton<TempViewModel>();
                 services.AddTransient<TestManagePage>();
                 services.AddTransient<TestManageViewModel>();
                 services.AddTransient<TestRunPage>();
