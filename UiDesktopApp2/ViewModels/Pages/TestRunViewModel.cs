@@ -3,20 +3,21 @@ using System.Timers;
 using System.Windows.Threading;
 using UiDesktopApp2.Helpers;
 using UiDesktopApp2.Models;
-using Timer = UiDesktopApp2.Helpers.Timer;
+using UiDesktopApp2.Views.Pages;
+using Wpf.Ui;
 
 namespace UiDesktopApp2.ViewModels.Pages
 {
     public partial class TestRunViewModel : ObservableObject
     {
         #region Private memebers
+        private readonly INavigationService _navigationService;
         private readonly GlobalState _globalState;
-        private int setIndex = 0;
-        private int imageIndex = 0;
-        private Timer _timer;
-        private int _variantTime = 0;
-        private int _imageSetTime = 0;
-        private ResultDTO _result;
+        private readonly UITimer _uiTimer;
+        private readonly ResultTracker _resultTracker;
+        private readonly ImageDisplay _imageDisplay;
+        private readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
+        private bool _lastImageWasProcessed = false;
         #endregion
 
         #region Observable properties
@@ -25,27 +26,26 @@ namespace UiDesktopApp2.ViewModels.Pages
         [ObservableProperty]
         private string _currentImageSource;
         [ObservableProperty]
-        private string _countdownText = "00:00";
+        private string _countdownText = "0";
         #endregion
 
         #region Constructors
-        public TestRunViewModel(GlobalState globalState)
+        public TestRunViewModel(INavigationService navigationService, GlobalState globalState)
         {
+            _navigationService = navigationService;
             _globalState = globalState;
-            _currentTest = _globalState.TestToRun;
-            _result = new ResultDTO()
+            _currentTest = _globalState.TestToRun!;
+            _resultTracker = new ResultTracker(CurrentTest.Id, globalState);
+            _imageDisplay = new ImageDisplay();
+            _imageDisplay.ImageSets = CurrentTest.ImageSets.ToList();
+            _uiTimer = new UITimer(1)
             {
-                ImageSetTimes = new List<ResultImageSetTimeDTO>(),
-                VariantTimes = new List<ResultImageVariantTimeDTO>()
+                SecondsToCountDown = 10,
+                UpdateUI = UpdateUI,
+                CompletedAction = OnTimerComplete
             };
-            _globalState.SubjectToTest.Results.Add(_result);
-            _timer = new Timer(10)
-            {
-                Tick = TimerTick,
-                Completed = TimerComplete
-            };
-            _timer.Start();
-            CurrentImageSource = GetDisplayImageSource();
+            CurrentImageSource = _imageDisplay.GetNextImage();
+            _uiTimer.Start();
         }
         #endregion
 
@@ -53,59 +53,48 @@ namespace UiDesktopApp2.ViewModels.Pages
         [RelayCommand]
         private void OnSkip()
         {
-            RestartTimer();
-            SetNextImage();
+            // Track Time elapsed
+            _resultTracker.TrackResult(_uiTimer.GetTimeElapsed(), _imageDisplay.IsNextImageAvailable());
+
+            // If this was the last image finish the test
+            if (_lastImageWasProcessed)
+            {
+                _navigationService.Navigate(typeof(TestResultPage));
+                return;
+            }
+
+            // Display image
+            CurrentImageSource = _imageDisplay.GetNextImage();
+            _uiTimer.Restart();
+            _lastImageWasProcessed = !_imageDisplay.IsNextImageAvailable() && !_imageDisplay.IsNextSetAvailable();
         }
         #endregion
 
         #region Private helpers
-        private string GetDisplayImageSource()
+        private void UpdateUI(int seconds)
         {
-            return CurrentTest.ImageSets[setIndex].Images[imageIndex].Source;
+            // Update timer on UI
+            CountdownText = seconds.ToString();
         }
-        private void SetNextImage()
-        {
-            if (IsNextImageAvailable())
+        private void OnTimerComplete(double timeElapsed)
+        {            
+            // Track Time elapsed
+            _resultTracker.TrackResult(timeElapsed, _imageDisplay.IsNextImageAvailable());
+
+            // If this was the last image finish the test
+            if (_lastImageWasProcessed)
             {
-                imageIndex++;
-            }
-            else if (IsNextSetAvailable())
-            {
-                _result.ImageSetTimes.Add(new ResultImageSetTimeDTO()
+                _dispatcher.Invoke(() =>
                 {
-                    Seconds = _imageSetTime
+                    _navigationService.Navigate(typeof(TestResultPage));
                 });
-                imageIndex = 0;
-                setIndex++;
-            }
-            else
-            {
-                // TODO navigate to results page
-                _timer.Reset();
                 return;
             }
-            CurrentImageSource = GetDisplayImageSource();
-        }
-        private bool IsNextSetAvailable()
-        {
-            return setIndex + 1 < CurrentTest.ImageSets.Count;
-        }
-        private bool IsNextImageAvailable()
-        {
-            return imageIndex + 1 < CurrentTest.ImageSets[setIndex].Images.Count;
-        }
-        private void TimerTick(int seconds)
-        {
-            CountdownText = TimeSpan.FromSeconds(seconds).ToString("mm':'ss");
-        }
-        private void TimerComplete()
-        {
-            RestartTimer();
-            SetNextImage();
-        }
-        private void RestartTimer()
-        {
-            _timer.Restart();
+
+            // Display image
+            CurrentImageSource = _imageDisplay.GetNextImage();
+            _uiTimer.Start();
+            _lastImageWasProcessed = !_imageDisplay.IsNextImageAvailable() && !_imageDisplay.IsNextSetAvailable();
         }
         #endregion
     }

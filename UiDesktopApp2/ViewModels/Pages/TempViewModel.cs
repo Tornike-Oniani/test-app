@@ -1,72 +1,57 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Timers;
 using System.Windows.Threading;
+using System.Diagnostics;
+using System.Collections.ObjectModel;
 
-namespace UiDesktopApp2.ViewModels.Pages
+public partial class TempViewModel : ObservableObject
 {
-    public partial class TempViewModel : ObservableObject
+    private System.Timers.Timer _timer;
+    private int SecondsToCountDown;
+    private Stopwatch _stopwatch;
+    private readonly Dispatcher _dispatcher;
+
+    [ObservableProperty]
+    private string _textOnUI = "Cirkachia levani";
+    public ObservableCollection<double> TimeDiffernceForEachCycle { get; set; } = new ObservableCollection<double>();
+
+    public TempViewModel()
     {
-        private DispatcherTimer _timer;
-        private int SecondsToCountDown = 5;
-        private int timerCycle = 2;
-        private int currentCycle = 1;
-        private DateTime startTime;
-        private List<double> timeDifferences = new List<double>();
-        private Stopwatch _stopwatch = new Stopwatch();
+        _dispatcher = Dispatcher.CurrentDispatcher; // Get the UI dispatcher
+        _timer = new System.Timers.Timer(1000); // Set interval to 1 second
+        _timer.Elapsed += _timer_Elapsed;
+        _timer.AutoReset = true;
+        _stopwatch = new Stopwatch();
+    }
 
-        [ObservableProperty]
-        private string _textOnUI = "Cirkachia levani";
+    [RelayCommand]
+    private void OnTimerStart()
+    {
+        StartTimer();
+    }
 
-        public TempViewModel()
+    private void StartTimer()
+    {
+        SecondsToCountDown = 30;
+        _stopwatch.Restart(); // Start high-precision timing
+        _dispatcher.Invoke(() => TextOnUI = SecondsToCountDown.ToString()); // Update UI immediately
+        _timer.Start();
+    }
+
+    private void _timer_Elapsed(object? sender, ElapsedEventArgs e)
+    {
+        SecondsToCountDown--;
+
+        if (SecondsToCountDown == 0)
         {
-            _timer = new DispatcherTimer()
-            {
-                Interval = TimeSpan.FromSeconds(1)
-            };
-            _timer.Tick += _timer_Tick;
-        }
-
-        [RelayCommand]
-        private void OnTimerStart()
-        {
+            _timer.Stop();
+            _stopwatch.Stop();
+            _dispatcher.Invoke(() =>
+                TimeDiffernceForEachCycle.Add(_stopwatch.Elapsed.TotalSeconds)
+            );
             StartTimer();
+            return;
         }
 
-        private void StartTimer()
-        {
-            _stopwatch.Restart();
-            SecondsToCountDown = 5;
-            _timer_Tick(this, EventArgs.Empty);
-            _timer.Start();
-            startTime = DateTime.Now;
-        }
-
-        private void _timer_Tick(object? sender, EventArgs e)
-        {
-            TextOnUI = SecondsToCountDown.ToString();
-            SecondsToCountDown--;
-
-            if (SecondsToCountDown == -1)
-            {
-                _timer.Stop();
-                _stopwatch.Stop();
-                timeDifferences.Add(_stopwatch.Elapsed.TotalSeconds);
-                currentCycle++;
-                if (currentCycle <= timerCycle)
-                {
-                    StartTimer();
-                }
-                else
-                {
-                    MessageBox.Show(
-                        $"Difference in one: {timeDifferences[0]}\nDifference in two: {timeDifferences[1]}"
-                        );
-                }
-            }
-        }
+        _dispatcher.Invoke(() => TextOnUI = SecondsToCountDown.ToString()); // Update UI
     }
 }

@@ -14,6 +14,11 @@ namespace UiDesktopApp2.Helpers
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            if (value == null)
+            {
+                return null;
+            }
+
             string sourceString = value as string;
 
             return new BitmapImage(new Uri(sourceString));

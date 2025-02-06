@@ -9,6 +9,7 @@ namespace UiDesktopApp2.Models
     public class ResultDTO
     {
         public int Id { get; set; }
+        public int TestId { get; set; }
         public List<ResultImageSetTimeDTO> ImageSetTimes { get; set; }
         public List<ResultImageVariantTimeDTO> VariantTimes { get; set; }
     }

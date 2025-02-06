@@ -12,6 +12,8 @@ namespace UiDesktopApp2.Helpers
         [ObservableProperty]
         private PersonDTO _subjectToTest;
         [ObservableProperty]
+        private ResultDTO _currentTestResult;
+        [ObservableProperty]
         private TestDTO? _testToManage;
         [ObservableProperty]
         private TestDTO? _testToRun;

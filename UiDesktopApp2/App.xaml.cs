@@ -88,6 +88,8 @@ namespace UiDesktopApp2
                 services.AddTransient<TestManageViewModel>();
                 services.AddTransient<TestRunPage>();
                 services.AddTransient<TestRunViewModel>();
+                services.AddTransient<TestResultPage>();
+                services.AddTransient<TestResultViewModel>();
             }).Build();
 
         /// <summary>
