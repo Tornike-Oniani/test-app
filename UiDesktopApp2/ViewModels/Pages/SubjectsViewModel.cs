@@ -2,10 +2,10 @@
 using UiDesktopApp2.DataAccess.Entities;
 using UiDesktopApp2.Helpers;
 using UiDesktopApp2.Models;
-using UiDesktopApp2.Services;
 using Wpf.Ui.Controls;
 using Wpf.Ui;
 using Wpf.Ui.Extensions;
+using UiDesktopApp2.DataAccess.Repositories;
 
 namespace UiDesktopApp2.ViewModels.Pages
 {

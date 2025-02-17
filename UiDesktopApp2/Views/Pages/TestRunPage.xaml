@@ -35,12 +35,13 @@
             >
             <ui:Button
                 Content="Skip"
-                Command="{Binding ViewModel.SkipCommand, Mode=OneWay}"
+                Command="{Binding ViewModel.SkipCommand}"
                 Width="100"
                 Margin="0 0 48 0"
                 />
             <ui:Button
                 Content="Recognize"
+                Command="{Binding ViewModel.RecognizeCommand}"
                 Appearance="Primary"
                 Width="100"
                 Margin="0 0 48 0"

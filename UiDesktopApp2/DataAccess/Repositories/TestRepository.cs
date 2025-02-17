@@ -5,7 +5,7 @@ using UiDesktopApp2.DataAccess;
 using UiDesktopApp2.DataAccess.Entities;
 using UiDesktopApp2.Models;
 
-namespace UiDesktopApp2.Services
+namespace UiDesktopApp2.DataAccess.Repositories
 {
     public class TestRepository(ApplicationDbContext context, IMapper mapper)
     {

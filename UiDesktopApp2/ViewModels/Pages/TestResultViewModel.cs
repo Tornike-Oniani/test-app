@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using UiDesktopApp2.Helpers;
 using UiDesktopApp2.Models;
 
-namespace UiDesktopApp2.Views.Pages
+namespace UiDesktopApp2.ViewModels.Pages
 {
     public partial class TestResultViewModel(GlobalState globalState) : ObservableObject
     {

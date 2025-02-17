@@ -9,6 +9,7 @@ namespace UiDesktopApp2.Models
     public class ResultImageVariantTimeDTO
     {
         public int Id { get; set; }
-        public int Seconds { get; set; }
+        public double Seconds { get; set; }
+        public bool Skipped { get; set; }
     }
 }

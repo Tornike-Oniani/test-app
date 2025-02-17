@@ -1,29 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using UiDesktopApp2.Models;
 
 namespace UiDesktopApp2.Helpers
 {
     public class ImageDisplay
     {
-        private int setIndex = 0;
-        private int imageIndex = -1;
+        private int _setIndex = 0;
+        private int _imageIndex = 0;
 
         public List<ImageSetDTO> ImageSets { get; set; }
+
+        public string GetCurrentImage()
+        {
+            return GetDisplayImageSource();
+        }
 
         public string GetNextImage()
         {
             if (IsNextImageAvailable())
             {
-                imageIndex++;
+                _imageIndex++;
             }
             else if (IsNextSetAvailable())
             {
-                imageIndex = 0;
-                setIndex++;
+                _imageIndex = 0;
+                _setIndex++;
             }
             else
             {
@@ -32,19 +33,25 @@ namespace UiDesktopApp2.Helpers
 
             return GetDisplayImageSource();
         }
+        public string JumpToNextSet()
+        {
+            _setIndex++;
+            _imageIndex = 0;
+            return GetDisplayImageSource();
+        }
 
         public bool IsNextSetAvailable()
         {
-            return setIndex + 1 < ImageSets.Count;
+            return _setIndex + 1 < ImageSets.Count;
         }
-        public bool IsNextImageAvailable()
+        public bool IsNextImageAvailable(bool trace = false)
         {
-            return imageIndex + 1 < ImageSets[setIndex].Images.Count;
+            return _imageIndex + 1 < ImageSets[_setIndex].Images.Count;
         }
 
         private string GetDisplayImageSource()
         {
-            return ImageSets[setIndex].Images[imageIndex].Source;
+            return ImageSets[_setIndex].Images[_imageIndex].Source;
         }
     }
 }

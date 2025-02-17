@@ -44,7 +44,7 @@ namespace UiDesktopApp2.ViewModels.Pages
                 UpdateUI = UpdateUI,
                 CompletedAction = OnTimerComplete
             };
-            CurrentImageSource = _imageDisplay.GetNextImage();
+            CurrentImageSource = _imageDisplay.GetCurrentImage();
             _uiTimer.Start();
         }
         #endregion
@@ -54,7 +54,7 @@ namespace UiDesktopApp2.ViewModels.Pages
         private void OnSkip()
         {
             // Track Time elapsed
-            _resultTracker.TrackResult(_uiTimer.GetTimeElapsed(), _imageDisplay.IsNextImageAvailable());
+            _resultTracker.TrackResult(_uiTimer.GetTimeElapsed(), _imageDisplay.IsNextImageAvailable(), skipped: true);
 
             // If this was the last image finish the test
             if (_lastImageWasProcessed)
@@ -68,6 +68,18 @@ namespace UiDesktopApp2.ViewModels.Pages
             _uiTimer.Restart();
             _lastImageWasProcessed = !_imageDisplay.IsNextImageAvailable() && !_imageDisplay.IsNextSetAvailable();
         }
+
+        [RelayCommand]
+        private void OnRecognize()
+        {
+            // Track Time elapsed
+            _resultTracker.TrackResult(_uiTimer.GetTimeElapsed(), _imageDisplay.IsNextSetAvailable(), recognized: true);
+
+            // Jump to the next set
+            CurrentImageSource = _imageDisplay.JumpToNextSet();
+            _uiTimer.Restart();
+            _lastImageWasProcessed = !_imageDisplay.IsNextImageAvailable() && !_imageDisplay.IsNextSetAvailable();
+        }
         #endregion
 
         #region Private helpers
@@ -77,7 +89,7 @@ namespace UiDesktopApp2.ViewModels.Pages
             CountdownText = seconds.ToString();
         }
         private void OnTimerComplete(double timeElapsed)
-        {            
+        {
             // Track Time elapsed
             _resultTracker.TrackResult(timeElapsed, _imageDisplay.IsNextImageAvailable());
 

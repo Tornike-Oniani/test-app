@@ -7,12 +7,6 @@ using System.Threading.Tasks;
 
 namespace UiDesktopApp2.DataAccess.Entities
 {
-    /// <summary>
-    /// რამდენი დრო დახარჯა თითო სურათის ვარიანტზე
-    /// რამდენი დრო დაიხარჯა სურათის ნაკრებზე
-    /// ამოუცნო თუ არა სურათი
-    /// რამდენჯერ გამოტოვა სურათის ვარიანტი
-    /// </summary>
     public class Result
     {
         [Key]

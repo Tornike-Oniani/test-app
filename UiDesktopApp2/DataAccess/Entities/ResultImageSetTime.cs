@@ -11,8 +11,10 @@ namespace UiDesktopApp2.DataAccess.Entities
     {
         [Key]
         public int Id { get; set; }
+        public double Seconds { get; set; }
+        public bool Recognized { get; set; }
         public int ImageSetId { get; set; }
-        public int Seconds { get; set; }
+        public ImageSet ImageSet { get; set; }
         public int ResultId { get; set; }
         public Result Result { get; set; }
     }

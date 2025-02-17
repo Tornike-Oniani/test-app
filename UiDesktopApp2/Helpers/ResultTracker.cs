@@ -1,4 +1,5 @@
-﻿using UiDesktopApp2.Models;
+﻿using System.Diagnostics;
+using UiDesktopApp2.Models;
 
 namespace UiDesktopApp2.Helpers
 {
@@ -19,20 +20,35 @@ namespace UiDesktopApp2.Helpers
             globalState.SubjectToTest.Results.Add(_result);
         }
 
-        public void TrackResult(double timeElapsed, bool isNextImageAvailable)
+        public void TrackResult(double timeElapsed, bool isNextImageAvailable, bool skipped = false, bool recognized = false)
         {
             _imageSetTime += timeElapsed;
             _result.VariantTimes.Add(new ResultImageVariantTimeDTO()
             {
-                Seconds = (int)timeElapsed
+                Seconds = timeElapsed,
+                Skipped = skipped
             });
 
-            // If this was the last image in set, track how much time was needed for the whole set
-            if (!isNextImageAvailable)
+            // If image was recognized track how much time it took to finish the set
+            if (recognized)
             {
                 _result.ImageSetTimes.Add(new ResultImageSetTimeDTO()
                 {
-                    Seconds = (int)_imageSetTime
+                    Seconds = _imageSetTime,
+                    Recognized = recognized
+                });
+                _imageSetTime = 0;
+                return;
+            }
+
+            // If this was the last image in set, track how much time was needed for the whole set if the image was not recognized
+            if (!isNextImageAvailable)
+            {
+                Trace.WriteLine($"Sum time: {_imageSetTime}");
+                _result.ImageSetTimes.Add(new ResultImageSetTimeDTO()
+                {
+                    Seconds = _imageSetTime,
+                    Recognized = recognized
                 });
                 _imageSetTime = 0;
             }

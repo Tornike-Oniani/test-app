@@ -9,6 +9,7 @@ namespace UiDesktopApp2.Models
     public class ResultImageSetTimeDTO
     {
         public int Id { get; set; }
-        public int Seconds { get; set; }
+        public double Seconds { get; set; }
+        public bool Recognized { get; set; }
     }
 }

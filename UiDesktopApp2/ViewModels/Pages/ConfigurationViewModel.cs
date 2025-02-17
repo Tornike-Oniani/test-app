@@ -1,6 +1,6 @@
-﻿using UiDesktopApp2.Helpers;
+﻿using UiDesktopApp2.DataAccess.Repositories;
+using UiDesktopApp2.Helpers;
 using UiDesktopApp2.Models;
-using UiDesktopApp2.Services;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 using Wpf.Ui.Extensions;

@@ -7,6 +7,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Threading;
 using UiDesktopApp2.DataAccess;
+using UiDesktopApp2.DataAccess.Repositories;
 using UiDesktopApp2.Helpers;
 using UiDesktopApp2.Services;
 using UiDesktopApp2.ViewModels.Pages;
