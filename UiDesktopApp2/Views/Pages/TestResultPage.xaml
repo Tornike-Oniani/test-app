@@ -12,19 +12,15 @@
       ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
       ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-      Title="TestResultPage">
+      Title="TestResultPage"
+      ui:NavigationView.HeaderContent="Results"
+      >
 
     <Grid>
         <ui:Card>
             <StackPanel
                 Orientation="Horizontal"
                 >
-                <ui:ListView
-                    Width="100"
-                    ItemsSource="{Binding ViewModel.Result.VariantTimes}"
-                    DisplayMemberPath="Seconds"
-                    Margin="0 0 12 0"
-                    />
                 <ui:ListView
                     Width="100"
                     ItemsSource="{Binding ViewModel.Result.ImageSetTimes}"

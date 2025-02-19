@@ -42,10 +42,24 @@
             IsChecked="{Binding ViewModel.CurrentTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Dark, Mode=OneWay}" />
 
         <TextBlock
+            FontSize="20"
+            FontWeight="Medium"
+            Text="Test" 
+            Margin="0 24 0 12"
+            />
+        <TextBlock 
+            Text="Image time"
+            Margin="0 0 0 6"
+            />
+        <TextBox
+            Text="{Binding ViewModel.ImageTime, UpdateSourceTrigger=PropertyChanged}"
+            HorizontalAlignment="Left"
+            />
+        <!--<TextBlock
             Margin="0,24,0,0"
             FontSize="20"
             FontWeight="Medium"
             Text="About UiDesktopApp2" />
-        <TextBlock Margin="0,12,0,0" Text="{Binding ViewModel.AppVersion, Mode=OneWay}" />
+        <TextBlock Margin="0,12,0,0" Text="{Binding ViewModel.AppVersion, Mode=OneWay}" />-->
     </StackPanel>
 </Page>

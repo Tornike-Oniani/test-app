@@ -35,6 +35,10 @@ namespace UiDesktopApp2.Helpers
         }
         public string JumpToNextSet()
         {
+            if (!IsNextSetAvailable())
+            {
+                return null;
+            }
             _setIndex++;
             _imageIndex = 0;
             return GetDisplayImageSource();

@@ -12,13 +12,15 @@ namespace UiDesktopApp2.Helpers
 {
     public class UITimer
     {
+        #region Private memebers
         private readonly Timer _timer;
         private readonly Stopwatch _stopwatch;
         private readonly Dispatcher _dispatcher;
         private int _initialSecondsToCountDown = 0;
-
         private int _secondsToCountDown;
+        #endregion
 
+        #region Public properties
         public Action<int> UpdateUI { get; set; }
         public Action<double> CompletedAction { get; set; }
         public int IntervalInSeconds { get; set; }
@@ -34,8 +36,9 @@ namespace UiDesktopApp2.Helpers
                 _secondsToCountDown = value;
             }
         }
+        #endregion
 
-
+        #region Constructors
         public UITimer(int intervalInSeconds)
         {
             IntervalInSeconds = intervalInSeconds;
@@ -48,7 +51,9 @@ namespace UiDesktopApp2.Helpers
             _timer.AutoReset = true;
             _stopwatch = new Stopwatch();
         }
+        #endregion
 
+        #region Public methods
         public void Start()
         {
             if (UpdateUI == null)
@@ -61,7 +66,16 @@ namespace UiDesktopApp2.Helpers
             _stopwatch.Restart();
             _timer.Start();
         }
-
+        public void Pause()
+        {
+            _stopwatch.Stop();
+            _timer.Stop();
+        }
+        public void Resume()
+        {
+            _stopwatch.Start();
+            _timer.Start();
+        }
         public void Restart()
         {
             _timer.Stop();
@@ -74,7 +88,9 @@ namespace UiDesktopApp2.Helpers
         {
             return _stopwatch.Elapsed.TotalSeconds;
         }
+        #endregion
 
+        #region Private helpers
         private void _timer_Elapsed(object? sender, ElapsedEventArgs e)
         {
             SecondsToCountDown--;
@@ -95,5 +111,6 @@ namespace UiDesktopApp2.Helpers
                 UpdateUI(SecondsToCountDown);
             });
         }
+        #endregion
     }
 }

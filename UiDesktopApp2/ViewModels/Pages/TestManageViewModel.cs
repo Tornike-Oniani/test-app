@@ -31,19 +31,30 @@ namespace UiDesktopApp2.ViewModels.Pages
 
         [RelayCommand]
         private async void OnAddImageVariant(ImageSetDTO imageSet)
-        {
+        {            
             OpenFileDialog ofd = new OpenFileDialog
             {
                 Title = "Select an image",
-                Filter = "Image Files|*.jpg;*.jpeg;*.png;*.bmp;*.gif"
+                Filter = "Image Files|*.jpg;*.jpeg;*.png;*.bmp;*.gif",
             };
 
             if (ofd.ShowDialog() == true)
             {
+                // Copy to root
+                string imagesDir = Path.Combine(Environment.CurrentDirectory, "Images");
+                if (!Directory.Exists(imagesDir))
+                {
+                    Directory.CreateDirectory(imagesDir);
+                }
+                string fileName = Path.GetFileName(ofd.FileName);
+                string localFilePath = Path.Combine(Environment.CurrentDirectory, "Images", fileName);
+                File.Copy(ofd.FileName, localFilePath, true);
+
+                // Add new path to db
                 ImageVariantDTO image = new ImageVariantDTO()
                 {
-                    Name = Path.GetFileName(ofd.FileName),
-                    Source = ofd.FileName
+                    Name = fileName,
+                    Source = localFilePath
                 };
                 imageSet.Images.Add(image);
             }

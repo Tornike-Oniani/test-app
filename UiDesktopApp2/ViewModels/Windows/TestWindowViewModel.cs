@@ -1,17 +1,16 @@
-﻿using System.Diagnostics;
-using System.Timers;
+﻿
 using System.Windows.Threading;
-using UiDesktopApp2.DataAccess.Entities;
 using UiDesktopApp2.Helpers;
 using UiDesktopApp2.Models;
 using UiDesktopApp2.Views.Pages;
-using Wpf.Ui;
 using Wpf.Ui.Controls;
+using Wpf.Ui;
 using Wpf.Ui.Extensions;
+using UiDesktopApp2.Views.Windows;
 
-namespace UiDesktopApp2.ViewModels.Pages
+namespace UiDesktopApp2.ViewModels.Windows
 {
-    public partial class TestRunViewModel : ObservableObject
+    public partial class TestWindowViewModel : ObservableObject
     {
         #region Private memebers
         private readonly INavigationService _navigationService;
@@ -36,7 +35,7 @@ namespace UiDesktopApp2.ViewModels.Pages
         #endregion
 
         #region Constructors
-        public TestRunViewModel(INavigationService navigationService, GlobalState globalState, IContentDialogService contentDialogService, Settings settings)
+        public TestWindowViewModel(INavigationService navigationService, GlobalState globalState, IContentDialogService contentDialogService, Settings settings)
         {
             _navigationService = navigationService;
             _globalState = globalState;
@@ -77,15 +76,32 @@ namespace UiDesktopApp2.ViewModels.Pages
         }
 
         [RelayCommand]
-        private async Task OnRecognize(object content)
+        private async Task OnRecognize(TestWindow window)
         {
             // Track Time elapsed
             _resultTracker.TrackResult(_uiTimer.GetTimeElapsed(), _imageDisplay.IsNextSetAvailable(), recognized: true);
 
-            // Show dialog for user to type in the image name
+            // If no more sets are available finish the test
+            if (!_imageDisplay.IsNextSetAvailable())
+            {
+                window.Close();
+                _navigationService.Navigate(typeof(TestResultPage));
+                return;
+            }
+
+            // Jump to the next set
+            CurrentImageSource = _imageDisplay.JumpToNextSet();
+            _uiTimer.Restart();
+            _lastImageWasProcessed = !_imageDisplay.IsNextImageAvailable() && !_imageDisplay.IsNextSetAvailable();
+            RecognizeImageName = String.Empty;
+
+        }
+        #endregion
+
+        #region Public methods
+        public void StopTest()
+        {
             _uiTimer.Pause();
-            await HandleRecoginzeDialog(content);
-            
         }
         #endregion
 

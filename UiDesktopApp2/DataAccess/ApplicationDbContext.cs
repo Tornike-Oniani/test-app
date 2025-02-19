@@ -22,6 +22,5 @@ namespace UiDesktopApp2.DataAccess
         public DbSet<ImageVariant> ImageVariants { get; set; }
         public DbSet<Result> Results { get; set; }
         public DbSet<ResultImageSetTime> ResultImageSetTimes { get; set; }
-        public DbSet<ResultImageVariantTime> ResultImageVariantTimes { get; set; }
     }
 }

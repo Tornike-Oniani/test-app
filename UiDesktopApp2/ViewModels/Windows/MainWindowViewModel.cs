@@ -17,12 +17,12 @@ namespace UiDesktopApp2.ViewModels.Windows
                 Icon = new SymbolIcon { Symbol = SymbolRegular.Home24 },
                 TargetPageType = typeof(Views.Pages.DashboardPage)
             },
-            new NavigationViewItem()
-            {
-                Content = "Data",
-                Icon = new SymbolIcon { Symbol = SymbolRegular.DataHistogram24 },
-                TargetPageType = typeof(Views.Pages.DataPage)
-            },
+            //new NavigationViewItem()
+            //{
+            //    Content = "Data",
+            //    Icon = new SymbolIcon { Symbol = SymbolRegular.DataHistogram24 },
+            //    TargetPageType = typeof(Views.Pages.DataPage)
+            //},
             new NavigationViewItem()
             {
                 Content = "Subjects",
@@ -35,12 +35,12 @@ namespace UiDesktopApp2.ViewModels.Windows
                 Icon = new SymbolIcon { Symbol = SymbolRegular.Image24 },
                 TargetPageType = typeof(Views.Pages.ConfigurationPage)
             },
-            new NavigationViewItem()
-            {
-                Content = "Temp",
-                Icon = new SymbolIcon { Symbol = SymbolRegular.Temperature24 },
-                TargetPageType = typeof(Views.Pages.TempPage)
-            }
+            //new NavigationViewItem()
+            //{
+            //    Content = "Temp",
+            //    Icon = new SymbolIcon { Symbol = SymbolRegular.Temperature24 },
+            //    TargetPageType = typeof(Views.Pages.TempPage)
+            //}
         };
 
         [ObservableProperty]

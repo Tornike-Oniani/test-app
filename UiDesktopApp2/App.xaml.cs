@@ -64,6 +64,7 @@ namespace UiDesktopApp2
 
                 // Global state
                 services.AddSingleton<GlobalState>();
+                services.AddSingleton<Settings>();
 
                 // Repositories
                 services.AddScoped<TestRepository>();

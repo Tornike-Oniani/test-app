@@ -16,6 +16,5 @@ namespace UiDesktopApp2.DataAccess.Entities
         public int TestId { get; set; }
         public Test Test { get; set; }
         public List<ResultImageSetTime> ImageSetTimes { get; set; }
-        public List<ResultImageVariantTime> ImageVariantTimes { get; set; }
     }
 }

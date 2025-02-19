@@ -46,7 +46,8 @@ namespace UiDesktopApp2.ViewModels.Pages
                 };
 
                 // Add test to database and retrieve its id
-                await personRepo.CreatePerson(personDto);
+                int id = await personRepo.CreatePerson(personDto);
+                personDto.Id = id;
 
                 // Add test to global state
                 GlobalState.Subjects.Add(personDto);
@@ -55,7 +56,6 @@ namespace UiDesktopApp2.ViewModels.Pages
             ClearForm();
         }
         #endregion
-
 
         #region Private helpers
         private bool IsPersonFormValid()

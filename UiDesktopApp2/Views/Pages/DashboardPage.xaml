@@ -22,10 +22,12 @@
             HorizontalAlignment="Center"
             Padding="24 24 24 24"
             >
-            <StackPanel>
+            <StackPanel
+                Width="400"
+                >
                 <ui:TextBlock
                     Text="Choose a subject to test"
-                    TextAlignment="Center"
+                    TextAlignment="Left"
                     Margin="0 0 0 6"
                     />
                 <ComboBox
@@ -52,7 +54,7 @@
                 </ComboBox>
                 <ui:TextBlock
                     Text="Choose a test to run"
-                    TextAlignment="Center"
+                    TextAlignment="Left"
                     Margin="0 0 0 6"
                     />
                 <ComboBox
@@ -60,7 +62,7 @@
                     DisplayMemberPath="Name"
                     SelectedItem="{Binding ViewModel.SelectedTest}"
                     MinWidth="150px"
-                    Margin="0 0 0 6"
+                    Margin="0 0 0 12"
                     />
                 <ui:Button
                     Content="Run test"
@@ -69,6 +71,20 @@
                     Appearance="Primary"
                     HorizontalAlignment="Stretch"
                     />
+                <ListView
+                    x:Name="temp"
+                    ItemsSource="{Binding ViewModel.Temp}"
+                    Height="200"
+                    Margin="0 24 0 0"
+                    >
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListViewItem}">
+                            <Setter Property="AllowDrop" Value="True" />
+                            <EventSetter Event="PreviewMouseLeftButtonDown" Handler="ListViewItem_PreviewMouseLeftButtonDown" />
+                            <EventSetter Event="Drop" Handler="ListViewItem_Drop" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                </ListView>
             </StackPanel>
         </ui:Card>
     </Grid>

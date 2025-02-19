@@ -19,7 +19,6 @@ namespace UiDesktopApp2.DataAccess.Repositories
                 .Include(p => p.Results)
                 .ThenInclude(r => r.ImageSetTimes)
                 .Include(p => p.Results)
-                .ThenInclude(r => r.ImageVariantTimes)
                 .ToListAsync();
 
             return mapper.Map<List<PersonDTO>>(subjects);

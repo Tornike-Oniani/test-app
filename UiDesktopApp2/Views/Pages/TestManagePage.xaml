@@ -12,10 +12,12 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="TestPage"
       ui:NavigationView.HeaderContent="{Binding ViewModel.GlobalState.TestToManage.Name}"
+      ScrollViewer.CanContentScroll="True"
       >
 
     <Page.Resources>
         <helpers:SubtractConverter x:Key="Subtract" />
+        <helpers:AddOneConverter x:Key="AddOne" />
     </Page.Resources>
     
     <Grid Margin="0 0 0 12">
@@ -25,6 +27,9 @@
     </Grid.RowDefinitions>
     <ui:ListView            
         ItemsSource="{Binding ViewModel.GlobalState.TestToManage.ImageSets}"
+        ScrollViewer.CanContentScroll="False"
+        ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+        ScrollViewer.VerticalScrollBarVisibility="Disabled"
         AlternationCount="50"
         >
         <ui:ListView.Template>
@@ -33,13 +38,12 @@
                     <Border
                         BorderThickness="2 0 0 0"
                         BorderBrush="{ui:ThemeResource AccentTextFillColorPrimaryBrush}"
-                        Height="{Binding ElementName=Presenter, Path=ActualHeight, Converter={StaticResource Subtract}, ConverterParameter=65}"
+                        Height="{Binding ElementName=Presenter, Path=ActualHeight, Converter={StaticResource Subtract}, ConverterParameter=85}"
                         VerticalAlignment="Top"
-                        Margin="16 33 0 0"
+                        Margin="16 35 0 0"
                         />
                     <ScrollViewer 
                         x:Name="PART_ScrollViewer"
-                        CanContentScroll="True"
                         VerticalAlignment="Top"
                         >
                         <ItemsPresenter 
@@ -61,6 +65,7 @@
                     <!--Number-->
                     <Grid
                         Margin="0 0 16 0"
+                        Height="85"
                         Grid.Column="0"
                         >
                         <Ellipse 
@@ -69,7 +74,7 @@
                             Fill="{ui:ThemeResource AccentTextFillColorPrimaryBrush}" 
                             />
                         <TextBlock 
-                            Text="{Binding RelativeSource={RelativeSource AncestorType=ListViewItem}, Path=(ItemsControl.AlternationIndex)}"
+                            Text="{Binding RelativeSource={RelativeSource AncestorType=ListViewItem}, Path=(ItemsControl.AlternationIndex), Converter={StaticResource AddOne}}"
                             FontSize="14"
                             Foreground="White"
                             HorizontalAlignment="Center" 
@@ -79,6 +84,9 @@
                         <!--List of images-->
                         <ui:ListView 
                             ItemsSource="{Binding Images}"
+                            ScrollViewer.CanContentScroll="False"
+                            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                            ScrollViewer.VerticalScrollBarVisibility="Disabled"
                             Grid.Column="1"
                             >
                             <ui:ListView.ItemsPanel>

@@ -1,17 +1,19 @@
-﻿using Wpf.Ui.Appearance;
+﻿using UiDesktopApp2.Helpers;
+using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
 
 namespace UiDesktopApp2.ViewModels.Pages
 {
-    public partial class SettingsViewModel : ObservableObject, INavigationAware
+    public partial class SettingsViewModel(Settings settings) : ObservableObject, INavigationAware
     {
         private bool _isInitialized = false;
 
         [ObservableProperty]
         private string _appVersion = String.Empty;
-
         [ObservableProperty]
         private ApplicationTheme _currentTheme = ApplicationTheme.Unknown;
+        [ObservableProperty]
+        private int _imageTime = 10;
 
         public void OnNavigatedTo()
         {
@@ -19,7 +21,10 @@ namespace UiDesktopApp2.ViewModels.Pages
                 InitializeViewModel();
         }
 
-        public void OnNavigatedFrom() { }
+        public void OnNavigatedFrom() 
+        {
+            settings.ImageTime = ImageTime;
+        }
 
         private void InitializeViewModel()
         {
