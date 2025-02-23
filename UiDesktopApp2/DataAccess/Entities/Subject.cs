@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace UiDesktopApp2.DataAccess.Entities
 {
-    public class Person
+    public class Subject
     {
         [Key]
         public int Id { get; set; }

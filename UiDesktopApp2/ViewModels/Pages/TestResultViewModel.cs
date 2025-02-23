@@ -11,7 +11,7 @@ namespace UiDesktopApp2.ViewModels.Pages
     public partial class TestResultViewModel(GlobalState globalState) : ObservableObject
     {
         [ObservableProperty]
-        private PersonDTO _person = globalState.SubjectToTest;
+        private SubjectDTO _person = globalState.SubjectToTest;
         [ObservableProperty]
         private ResultDTO _result = globalState.CurrentTestResult;
     }

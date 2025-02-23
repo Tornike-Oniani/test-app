@@ -9,7 +9,7 @@ using UiDesktopApp2.DataAccess.Repositories;
 
 namespace UiDesktopApp2.ViewModels.Pages
 {
-    public partial class SubjectsViewModel(PersonRepository personRepo, IContentDialogService contentDialogService, GlobalState globalState) : ObservableObject
+    public partial class SubjectsViewModel(SubjectRepository personRepo, IContentDialogService contentDialogService, GlobalState globalState) : ObservableObject
     {
         #region Public properties
         public GlobalState GlobalState { get { return globalState; } }
@@ -39,14 +39,14 @@ namespace UiDesktopApp2.ViewModels.Pages
             // If user clicked yes and input was valid add the new test
             if (result == ContentDialogResult.Primary && IsPersonFormValid())
             {
-                var personDto = new PersonDTO()
+                var personDto = new SubjectDTO()
                 {
                     FirstName = NewPersonFirstName,
                     LastName = NewPersonLastName,
                 };
 
                 // Add test to database and retrieve its id
-                int id = await personRepo.CreatePerson(personDto);
+                int id = await personRepo.CreateSubject(personDto);
                 personDto.Id = id;
 
                 // Add test to global state

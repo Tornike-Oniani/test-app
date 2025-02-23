@@ -11,6 +11,8 @@ namespace UiDesktopApp2.DataAccess.Entities
     {
         [Key]
         public int Id { get; set; }
+        public string? Name { get; set; }
+        public bool IsUnknown { get; set; }
         public int TestId { get; set; }
         public Test Test { get; set; }
         public List<ImageVariant> ImageVariants { get; set; }

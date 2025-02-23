@@ -10,11 +10,14 @@ namespace UiDesktopApp2.Helpers
 
         public List<ImageSetDTO> ImageSets { get; set; }
 
+        public int GetCurrentSetId()
+        {
+            return ImageSets[_setIndex].Id;
+        }
         public string GetCurrentImage()
         {
             return GetDisplayImageSource();
         }
-
         public string GetNextImage()
         {
             if (IsNextImageAvailable())

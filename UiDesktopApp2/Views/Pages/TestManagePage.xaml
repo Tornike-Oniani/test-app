@@ -18,115 +18,175 @@
     <Page.Resources>
         <helpers:SubtractConverter x:Key="Subtract" />
         <helpers:AddOneConverter x:Key="AddOne" />
+        <helpers:ZeroToVisibilityConverter x:Key="ZeroToVisibility" />
     </Page.Resources>
     
     <Grid Margin="0 0 0 12">
-    <Grid.RowDefinitions>
-        <RowDefinition Height="*" />
-        <RowDefinition Height="Auto" />
-    </Grid.RowDefinitions>
-    <ui:ListView            
-        ItemsSource="{Binding ViewModel.GlobalState.TestToManage.ImageSets}"
-        ScrollViewer.CanContentScroll="False"
-        ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-        ScrollViewer.VerticalScrollBarVisibility="Disabled"
-        AlternationCount="50"
-        >
-        <ui:ListView.Template>
-            <ControlTemplate TargetType="{x:Type ui:ListView}">
-                <Grid>
-                    <Border
-                        BorderThickness="2 0 0 0"
-                        BorderBrush="{ui:ThemeResource AccentTextFillColorPrimaryBrush}"
-                        Height="{Binding ElementName=Presenter, Path=ActualHeight, Converter={StaticResource Subtract}, ConverterParameter=85}"
-                        VerticalAlignment="Top"
-                        Margin="16 35 0 0"
-                        />
-                    <ScrollViewer 
-                        x:Name="PART_ScrollViewer"
-                        VerticalAlignment="Top"
-                        >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <ItemsControl
+            ItemsSource="{Binding ViewModel.GlobalState.TestToManage.ImageSets}"
+            AlternationCount="500"
+            >
+            <ItemsControl.ItemContainerStyle>
+                <Style TargetType="{x:Type ContentPresenter}">
+                    <Setter Property="Margin" Value="0 0 0 12" />
+                </Style>
+            </ItemsControl.ItemContainerStyle>
+            <ItemsControl.Template>
+                <ControlTemplate TargetType="{x:Type ItemsControl}">
+                    <Grid>
+                        <!-- Line -->
+                        <Border
+                            BorderThickness="2 0 0 0"
+                            BorderBrush="{ui:ThemeResource AccentTextFillColorPrimaryBrush}"
+                            Height="{Binding ElementName=Presenter, Path=ActualHeight, Converter={StaticResource Subtract}, ConverterParameter=156}"
+                            VerticalAlignment="Top"
+                            Margin="12 66 0 0"
+                            />
                         <ItemsPresenter 
                             VerticalAlignment="Top"
                             x:Name="Presenter"
                             />
-                    </ScrollViewer>
-                </Grid>
-            </ControlTemplate>
-        </ui:ListView.Template>
-        <ui:ListView.ItemTemplate>
-            <DataTemplate>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <!--Number-->
-                    <Grid
-                        Margin="0 0 16 0"
-                        Height="85"
-                        Grid.Column="0"
-                        >
-                        <Ellipse 
-                            Width="25" 
-                            Height="25" 
-                            Fill="{ui:ThemeResource AccentTextFillColorPrimaryBrush}" 
-                            />
-                        <TextBlock 
-                            Text="{Binding RelativeSource={RelativeSource AncestorType=ListViewItem}, Path=(ItemsControl.AlternationIndex), Converter={StaticResource AddOne}}"
-                            FontSize="14"
-                            Foreground="White"
-                            HorizontalAlignment="Center" 
-                            VerticalAlignment="Center" 
-                            />
-                        </Grid>
-                        <!--List of images-->
-                        <ui:ListView 
-                            ItemsSource="{Binding Images}"
-                            ScrollViewer.CanContentScroll="False"
-                            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                            ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                            Grid.Column="1"
+                    </Grid>
+                </ControlTemplate>
+            </ItemsControl.Template>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <!--Number-->
+                        <Grid
+                            Margin="0 0 24 0"
+                            Height="85"
+                            Grid.Column="0"
                             >
-                            <ui:ListView.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal" />
-                                </ItemsPanelTemplate>
-                            </ui:ListView.ItemsPanel>
-                            <ui:ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel>
-                                        <ui:Image
-                                            Height="50"
-                                            Source="{Binding Source}"
+                            <Ellipse 
+                                Width="25" 
+                                Height="25" 
+                                Fill="{ui:ThemeResource AccentTextFillColorPrimaryBrush}" 
+                                />
+                            <TextBlock 
+                                Text="{Binding RelativeSource={RelativeSource AncestorType=ContentPresenter}, Path=(ItemsControl.AlternationIndex), Converter={StaticResource AddOne}}"
+                                FontSize="14"
+                                Foreground="White"
+                                HorizontalAlignment="Center" 
+                                VerticalAlignment="Center" 
+                                />
+                        </Grid>
+                        <!-- Body -->
+                        <ui:Card
+                            Grid.Column="1"                            
+                            >
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid
+                                    Grid.Row="0"
+                                    Margin="0 0 0 8"
+                                    >
+                                    <TextBlock
+                                        Text="Empty set..."
+                                        Visibility="{Binding Images.Count, Converter={StaticResource ZeroToVisibility}, ConverterParameter=Inverse}"
+                                        VerticalAlignment="Center"
+                                        Margin="12 0 0 0"
+                                        />
+                                    <!--List of images-->
+                                    <ItemsControl
+                                        ItemsSource="{Binding Images}"
+                                        Visibility="{Binding Images.Count, Converter={StaticResource ZeroToVisibility}}"
+                                        MinHeight="59"
+                                        >
+                                    <ItemsControl.ItemContainerStyle>
+                                        <Style TargetType="{x:Type ContentPresenter}">
+                                            <Setter Property="Margin" Value="0 0 8 0" />
+                                        </Style>
+                                    </ItemsControl.ItemContainerStyle>
+                                        <ItemsControl.Template>
+                                            <ControlTemplate TargetType="{x:Type ItemsControl}">
+                                                <ScrollViewer
+                                                    HorizontalScrollBarVisibility="Auto"
+                                                    VerticalScrollBarVisibility="Disabled"
+                                                    PreviewMouseWheel="ScrollViewer_PreviewMouseWheel"
+                                                    Padding="0 0 0 12"
+                                                    >
+                                                    <ItemsPresenter />
+                                                </ScrollViewer>
+                                            </ControlTemplate>
+                                        </ItemsControl.Template>
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Horizontal" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid>
+                                                <StackPanel>
+                                                    <ui:Image
+                                                        Height="40"
+                                                        Source="{Binding Source}"
+                                                        />
+                                                    <TextBlock
+                                                        Text="{Binding Name}"
+                                                        HorizontalAlignment="Center"
+                                                        TextAlignment="Center"
+                                                        />
+                                                </StackPanel>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                </Grid>
+                                <!-- Actions -->
+                                <Grid
+                                    Grid.Row="1"
+                                    >
+                                    <!--Add image button-->
+                                    <ui:Button
+                                        Content="Add Image"
+                                        Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Page}}, Path=DataContext.ViewModel.AddImageVariantCommand}"
+                                        CommandParameter="{Binding}"
+                                        Appearance="Primary"
+                                        HorizontalAlignment="Left"
+                                        />
+
+                                    <StackPanel 
+                                        Orientation="Horizontal"
+                                        HorizontalAlignment="Right"
+                                        >
+                                        <ui:ToggleSwitch
+                                            OffContent="Unknown set?"
+                                            OnContent="Unknown set?"
+                                            Margin="0 0 12 0"
                                             />
-                                        <TextBlock
-                                            Text="{Binding Name}"
-                                            HorizontalAlignment="Center"
-                                            TextAlignment="Center"
+                                        <ui:Button
+                                            Content="Remove set"
+                                            Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Page}}, Path=DataContext.ViewModel.RemoveSetCommand}"
+                                            CommandParameter="{Binding}"
+                                            Appearance="Secondary"
                                             />
                                     </StackPanel>
-                                </DataTemplate>
-                            </ui:ListView.ItemTemplate>
-                        </ui:ListView>
-                    <!--Add image button-->
-                    <ui:Button
-                        Content="Add Image"
-                        Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Page}}, Path=DataContext.ViewModel.AddImageVariantCommand}"
-                        CommandParameter="{Binding}"
-                        Grid.Column="2"
-                        />
-                </Grid>
-            </DataTemplate>
-        </ui:ListView.ItemTemplate>
-    </ui:ListView>
-    <ui:Button
-        Content="Add Set"
-        Command="{Binding ViewModel.AddSetCommand}"
-        Appearance="Primary"
-        HorizontalAlignment="Stretch"
-        Grid.Row="1"
-        />
+                                </Grid>
+                            </Grid>
+                        </ui:Card>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <ui:Button
+            Content="Add Set"
+            Command="{Binding ViewModel.AddSetCommand}"
+            Appearance="Primary"
+            HorizontalAlignment="Stretch"
+            Grid.Row="1"
+            />
 </Grid>
 </Page>

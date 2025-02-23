@@ -11,23 +11,23 @@ using UiDesktopApp2.Models;
 
 namespace UiDesktopApp2.DataAccess.Repositories
 {
-    public class PersonRepository(ApplicationDbContext context, IMapper mapper)
+    public class SubjectRepository(ApplicationDbContext context, IMapper mapper)
     {
-        public async Task<List<PersonDTO>> GetAllPeopleAsync()
+        public async Task<List<SubjectDTO>> GetAllSubjects()
         {
-            var subjects = await context.People
+            var subjects = await context.Subjects
                 .Include(p => p.Results)
                 .ThenInclude(r => r.ImageSetTimes)
                 .Include(p => p.Results)
                 .ToListAsync();
 
-            return mapper.Map<List<PersonDTO>>(subjects);
+            return mapper.Map<List<SubjectDTO>>(subjects);
         }
 
-        public async Task<int> CreatePerson(PersonDTO personDto)
+        public async Task<int> CreateSubject(SubjectDTO subjcetDto)
         {
-            var person = mapper.Map<Person>(personDto);
-            context.People.Add(person);
+            var person = mapper.Map<Subject>(subjcetDto);
+            context.Subjects.Add(person);
             await context.SaveChangesAsync();
             return person.Id;
         }

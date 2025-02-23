@@ -7,10 +7,10 @@ namespace UiDesktopApp2.Helpers
     public partial class GlobalState : ObservableObject
     {
         public ObservableCollection<TestDTO> Tests { get; set; } = new ObservableCollection<TestDTO>();
-        public ObservableCollection<PersonDTO> Subjects { get; set; } = new ObservableCollection<PersonDTO>();
+        public ObservableCollection<SubjectDTO> Subjects { get; set; } = new ObservableCollection<SubjectDTO>();
 
         [ObservableProperty]
-        private PersonDTO _subjectToTest;
+        private SubjectDTO _subjectToTest;
         [ObservableProperty]
         private ResultDTO _currentTestResult;
         [ObservableProperty]

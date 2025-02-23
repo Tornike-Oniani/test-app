@@ -13,6 +13,7 @@ namespace UiDesktopApp2.ViewModels.Pages
 {
     public partial class TestRunViewModel : ObservableObject
     {
+        /*
         #region Private memebers
         private readonly INavigationService _navigationService;
         private readonly GlobalState _globalState;
@@ -148,5 +149,6 @@ namespace UiDesktopApp2.ViewModels.Pages
             }
         }
         #endregion
-    }
+        */
+    }        
 }

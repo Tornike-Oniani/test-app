@@ -29,7 +29,7 @@ namespace UiDesktopApp2.Services
 
             CreateMap<ImageVariant, ImageVariantDTO>();
 
-            CreateMap<Person, PersonDTO>()
+            CreateMap<Subject, SubjectDTO>()
             .ForMember(dest => dest.Results, opt => opt.MapFrom((src, _, _, context) =>
                 src.Results != null ? src.Results.Select(x => context.Mapper.Map<ResultDTO>(x)).ToList()
                                     : new List<ResultDTO>()));
@@ -38,6 +38,8 @@ namespace UiDesktopApp2.Services
                 .ForMember(dest => dest.ImageSetTimes, opt => opt.MapFrom((src, _, _, context) =>
                     src.ImageSetTimes != null ? src.ImageSetTimes.Select(x => context.Mapper.Map<ResultImageSetTimeDTO>(x)).ToList()
                                               : new List<ResultImageSetTimeDTO>()));
+
+            CreateMap<ResultImageSetTime, ResultImageSetTimeDTO>();
 
             // DTO -> Entity (for saving back to DB)
             CreateMap<TestDTO, Test>()
@@ -48,7 +50,7 @@ namespace UiDesktopApp2.Services
 
             CreateMap<ImageVariantDTO, ImageVariant>();
 
-            CreateMap<PersonDTO, Person>()
+            CreateMap<SubjectDTO, Subject>()
            .ForMember(dest => dest.Results, opt => opt.MapFrom(src => src.Results));
 
             CreateMap<ResultDTO, Result>()

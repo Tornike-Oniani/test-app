@@ -16,7 +16,7 @@ namespace UiDesktopApp2.DataAccess
             optionsBuilder.UseSqlite("Data Source=results.db");
         }
 
-        public DbSet<Person> People { get; set; }
+        public DbSet<Subject> Subjects { get; set; }
         public DbSet<Test> Tests { get; set; }
         public DbSet<ImageSet> ImageSets { get; set; }
         public DbSet<ImageVariant> ImageVariants { get; set; }

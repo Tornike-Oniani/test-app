@@ -7,6 +7,7 @@ using Wpf.Ui.Controls;
 using Wpf.Ui;
 using Wpf.Ui.Extensions;
 using UiDesktopApp2.Views.Windows;
+using UiDesktopApp2.DataAccess.Repositories;
 
 namespace UiDesktopApp2.ViewModels.Windows
 {
@@ -20,6 +21,8 @@ namespace UiDesktopApp2.ViewModels.Windows
         private readonly ResultTracker _resultTracker;
         private readonly ImageDisplay _imageDisplay;
         private readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
+        private readonly ResultRepository _resultRepo;
+        private TestWindow _window;
         private bool _lastImageWasProcessed = false;
         #endregion
 
@@ -35,15 +38,24 @@ namespace UiDesktopApp2.ViewModels.Windows
         #endregion
 
         #region Constructors
-        public TestWindowViewModel(INavigationService navigationService, GlobalState globalState, IContentDialogService contentDialogService, Settings settings)
+        public TestWindowViewModel(
+            INavigationService navigationService, 
+            GlobalState globalState, 
+            IContentDialogService contentDialogService, 
+            Settings settings,
+            ResultRepository resultRepo,
+            TestWindow window
+            )
         {
             _navigationService = navigationService;
             _globalState = globalState;
             _contentDialogService = contentDialogService;
             _currentTest = _globalState.TestToRun!;
-            _resultTracker = new ResultTracker(CurrentTest.Id, globalState);
+            _resultTracker = new ResultTracker(CurrentTest.Id, _globalState.SubjectToTest.Id, globalState);
             _imageDisplay = new ImageDisplay();
             _imageDisplay.ImageSets = CurrentTest.ImageSets.ToList();
+            _resultRepo = resultRepo;
+            _window = window;
             _uiTimer = new UITimer(1)
             {
                 SecondsToCountDown = settings.ImageTime,
@@ -57,35 +69,21 @@ namespace UiDesktopApp2.ViewModels.Windows
 
         #region Commands
         [RelayCommand]
-        private void OnSkip()
+        private async Task OnRecognize()
         {
             // Track Time elapsed
-            _resultTracker.TrackResult(_uiTimer.GetTimeElapsed(), _imageDisplay.IsNextImageAvailable(), skipped: true);
-
-            // If this was the last image finish the test
-            if (_lastImageWasProcessed)
-            {
-                _navigationService.Navigate(typeof(TestResultPage));
-                return;
-            }
-
-            // Display image
-            CurrentImageSource = _imageDisplay.GetNextImage();
-            _uiTimer.Restart();
-            _lastImageWasProcessed = !_imageDisplay.IsNextImageAvailable() && !_imageDisplay.IsNextSetAvailable();
-        }
-
-        [RelayCommand]
-        private async Task OnRecognize(TestWindow window)
-        {
-            // Track Time elapsed
-            _resultTracker.TrackResult(_uiTimer.GetTimeElapsed(), _imageDisplay.IsNextSetAvailable(), recognized: true);
+            _resultTracker.TrackResult(
+                _imageDisplay.GetCurrentSetId(),
+                _uiTimer.GetTimeElapsed(), 
+                _imageDisplay.IsNextSetAvailable(), 
+                recognized: true
+                );
 
             // If no more sets are available finish the test
             if (!_imageDisplay.IsNextSetAvailable())
             {
-                window.Close();
-                _navigationService.Navigate(typeof(TestResultPage));
+                await FinishTest();
+                //_navigationService.Navigate(typeof(TestResultPage));
                 return;
             }
 
@@ -111,18 +109,23 @@ namespace UiDesktopApp2.ViewModels.Windows
             // Update timer on UI
             CountdownText = seconds.ToString();
         }
-        private void OnTimerComplete(double timeElapsed)
+        private async void OnTimerComplete(double timeElapsed)
         {
             // Track Time elapsed
-            _resultTracker.TrackResult(timeElapsed, _imageDisplay.IsNextImageAvailable());
+            _resultTracker.TrackResult(
+                _imageDisplay.GetCurrentSetId(),
+                timeElapsed, 
+                _imageDisplay.IsNextImageAvailable()
+                );
 
             // If this was the last image finish the test
             if (_lastImageWasProcessed)
             {
-                _dispatcher.Invoke(() =>
-                {
-                    _navigationService.Navigate(typeof(TestResultPage));
-                });
+                await FinishTest();
+                //_dispatcher.Invoke(() =>
+                //{
+                //    _navigationService.Navigate(typeof(TestResultPage));
+                //});
                 return;
             }
 
@@ -131,37 +134,11 @@ namespace UiDesktopApp2.ViewModels.Windows
             _uiTimer.Start();
             _lastImageWasProcessed = !_imageDisplay.IsNextImageAvailable() && !_imageDisplay.IsNextSetAvailable();
         }
-        private async Task HandleRecoginzeDialog(object content)
+        private async Task FinishTest()
         {
-            ContentDialogResult result = await _contentDialogService.ShowSimpleDialogAsync(
-                new SimpleContentDialogCreateOptions()
-                {
-                    Title = "Recoginze image",
-                    Content = content,
-                    PrimaryButtonText = "Recognize",
-                    CloseButtonText = "Cancel"
-                }
-            );
-
-            if (result == ContentDialogResult.Primary)
-            {
-                // Jump to the next set
-                if (!_imageDisplay.IsNextSetAvailable())
-                {
-                    _navigationService.Navigate(typeof(TestResultPage));
-                    return;
-                }
-                CurrentImageSource = _imageDisplay.JumpToNextSet();
-                _uiTimer.Restart();
-                _lastImageWasProcessed = !_imageDisplay.IsNextImageAvailable() && !_imageDisplay.IsNextSetAvailable();
-                RecognizeImageName = String.Empty;
-            }
-            else
-            {
-                // Continue current image and timer
-                _uiTimer.Resume();
-                RecognizeImageName = String.Empty;
-            }
+            _uiTimer.Pause();
+            _window.Close();
+            await _resultRepo.CreateResult(_resultTracker.GetResult());
         }
         #endregion
     }

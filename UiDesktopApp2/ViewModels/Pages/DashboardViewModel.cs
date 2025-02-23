@@ -12,7 +12,7 @@ using Wpf.Ui.Controls;
 
 namespace UiDesktopApp2.ViewModels.Pages
 {
-    public partial class DashboardViewModel(INavigationService navigationService, TestRepository testRepo, PersonRepository personRepo, GlobalState globalState, IServiceProvider serviceProvider) : ObservableObject, INavigationAware
+    public partial class DashboardViewModel(INavigationService navigationService, TestRepository testRepo, SubjectRepository personRepo, GlobalState globalState, IServiceProvider serviceProvider) : ObservableObject, INavigationAware
     {
         #region Private members
         private bool _isInitialized = false;
@@ -81,7 +81,7 @@ namespace UiDesktopApp2.ViewModels.Pages
         #region Private helpers
         private async Task Initialize()
         {
-            List<PersonDTO> subjects = await personRepo.GetAllPeopleAsync();
+            List<SubjectDTO> subjects = await personRepo.GetAllSubjects();
 
             GlobalState.Subjects.Clear();
             foreach (var subject in subjects)

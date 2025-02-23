@@ -12,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using UiDesktopApp2.DataAccess.Repositories;
 using UiDesktopApp2.Helpers;
 using UiDesktopApp2.ViewModels.Windows;
 using Wpf.Ui;
@@ -31,7 +32,9 @@ namespace UiDesktopApp2.Views.Windows
                 serviceProvider.GetService(typeof(INavigationService)) as INavigationService,
                 serviceProvider.GetService(typeof(GlobalState)) as GlobalState,
                 serviceProvider.GetService(typeof(IContentDialogService)) as IContentDialogService,
-                serviceProvider.GetService(typeof(Settings)) as Settings
+                serviceProvider.GetService(typeof(Settings)) as Settings,
+                serviceProvider.GetService(typeof(ResultRepository)) as ResultRepository,
+                this
                 );
             DataContext = this;
             InitializeComponent();

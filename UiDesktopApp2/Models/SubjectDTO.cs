@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace UiDesktopApp2.Models
 {
-    public class PersonDTO
+    public class SubjectDTO
     {
         public int Id { get; set; }
         public string? FirstName { get; set; }
