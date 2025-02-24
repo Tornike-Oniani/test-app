@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Win32;
 using System.Configuration;
 using System.IO;
+using System.Reflection.Metadata;
 using UiDesktopApp2.DataAccess;
 using UiDesktopApp2.DataAccess.Entities;
 using UiDesktopApp2.DataAccess.Repositories;
@@ -37,7 +38,7 @@ namespace UiDesktopApp2.ViewModels.Pages
         }
 
         [RelayCommand]
-        public async Task RemoveSet(ImageSetDTO imageSet)
+        public async Task OnRemoveSet(ImageSetDTO imageSet)
         {
             ContentDialogResult result = await _contentDialogService.ShowSimpleDialogAsync(
                 new SimpleContentDialogCreateOptions()
@@ -120,6 +121,21 @@ namespace UiDesktopApp2.ViewModels.Pages
             }
 
             await _testRepo.UpdateTest(GlobalState.TestToManage);
+        }
+
+        [RelayCommand]
+        private async Task OnRemoveImageVariant(object parameter)
+        {
+            if (parameter is object[] parameters && parameters.Length == 2)
+            {
+                ImageSetDTO imageSet = parameters[0] as ImageSetDTO;
+                ImageVariantDTO imageVariant = parameters[1] as ImageVariantDTO;
+                imageSet.Images.Remove(imageVariant);
+                await _testRepo.UpdateTest(GlobalState.TestToManage);
+                return;
+            }
+
+            throw new ArgumentException("Invalid argument");
         }
     }
 }

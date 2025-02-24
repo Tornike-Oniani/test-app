@@ -10,7 +10,7 @@ using System.Windows.Media.Imaging;
 
 namespace UiDesktopApp2.Models
 {
-    public class ImageSetDTO
+    public class ImageSetDTO : ObservableObject
     {
         public int Id { get; set; }
         public string? Name { get; set; }
