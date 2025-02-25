@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace UiDesktopApp2.Models
+﻿namespace UiDesktopApp2.Models
 {
     public class SubjectDTO
     {
@@ -12,5 +6,12 @@ namespace UiDesktopApp2.Models
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public List<ResultDTO>? Results { get; set; }
+        public string FullName 
+        { 
+            get 
+            { 
+                return $"{FirstName} {LastName}"; 
+            } 
+        }
     }
 }

@@ -74,7 +74,8 @@ namespace UiDesktopApp2
                 // Main window with navigation
                 services.AddSingleton<INavigationWindow, MainWindow>();
                 services.AddSingleton<MainWindowViewModel>();
-
+               
+                // Main pages
                 services.AddSingleton<DashboardPage>();
                 services.AddSingleton<DashboardViewModel>();
                 services.AddSingleton<DataPage>();
@@ -87,6 +88,8 @@ namespace UiDesktopApp2
                 services.AddSingleton<SubjectsViewModel>();
                 services.AddSingleton<TempPage>();
                 services.AddSingleton<TempViewModel>();
+
+                // Sub pages
                 services.AddTransient<TestManagePage>();
                 services.AddTransient<TestManageViewModel>();
                 services.AddTransient<TestRunPage>();

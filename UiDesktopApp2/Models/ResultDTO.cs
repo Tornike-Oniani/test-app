@@ -10,6 +10,7 @@ namespace UiDesktopApp2.Models
     {
         public int Id { get; set; }
         public int TestId { get; set; }
+        public TestDTO Test { get; set; }
         public int SubjectId { get; set; }
         public List<ResultImageSetTimeDTO> ImageSetTimes { get; set; }
     }

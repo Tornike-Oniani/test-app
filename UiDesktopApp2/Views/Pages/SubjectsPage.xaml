@@ -49,8 +49,47 @@
             <ui:Card
                 VerticalAlignment="Top"
                 >
-                <ui:ListView
+                <TreeView
+                    ItemsSource="{Binding ViewModel.Subjects}"
+                    AllowDrop="True"
+                    >
+                    <TreeView.ItemTemplate>
+                        <HierarchicalDataTemplate ItemsSource="{Binding Results}">
+                            <!-- Subject item -->
+                            <StackPanel
+                                Orientation="Horizontal"
+                                >
+                                <TextBlock 
+                                    Text="{Binding FirstName}" 
+                                    Margin="0 0 6 0"
+                                    />
+                                <TextBlock
+                                    Text="{Binding LastName}"
+                                    />
+                            </StackPanel>
+                            <HierarchicalDataTemplate.ItemTemplate>
+                                <DataTemplate>
+                                    <!-- Test item -->
+                                    <Border>
+                                        <Border.InputBindings>
+                                            <MouseBinding 
+                                                Gesture="LeftClick"
+                                                Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Page}}, Path=DataContext.ViewModel.OpenTestResultCommand}"
+                                                CommandParameter="{Binding}"
+                                                />
+                                        </Border.InputBindings>
+                                        <TextBlock 
+                                            Text="{Binding Test.Name}"
+                                            />
+                                    </Border>
+                                </DataTemplate>
+                            </HierarchicalDataTemplate.ItemTemplate>
+                        </HierarchicalDataTemplate>
+                    </TreeView.ItemTemplate>
+                </TreeView>
+                <!--<ui:ListView
                     ItemsSource="{Binding ViewModel.GlobalState.Subjects}"
+                    Visibility="Collapsed"
                     >
                     <ui:ListView.View>
                         <ui:GridView>
@@ -64,7 +103,7 @@
                                 Header="Last Name" />
                         </ui:GridView>
                     </ui:ListView.View>
-                </ui:ListView>
+                </ui:ListView>-->
             </ui:Card>
         </StackPanel>
     </Grid>

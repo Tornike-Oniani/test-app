@@ -17,5 +17,7 @@ namespace UiDesktopApp2.Helpers
         private TestDTO? _testToManage;
         [ObservableProperty]
         private TestDTO? _testToRun;
+        [ObservableProperty]
+        private ResultDTO _resultToBrowse;
     }
 }

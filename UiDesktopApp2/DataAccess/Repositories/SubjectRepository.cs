@@ -24,6 +24,26 @@ namespace UiDesktopApp2.DataAccess.Repositories
             return mapper.Map<List<SubjectDTO>>(subjects);
         }
 
+        public async Task<List<SubjectDTO>> GetAllSubjectsWithTests()
+        {
+            var subjects = await context.Subjects
+                .Include(p => p.Results)
+                .ThenInclude(r => r.ImageSetTimes)
+                .Include(p => p.Results)
+                .ThenInclude(r => r.Test)
+                .Include(p => p.Results)
+                .ToListAsync();
+
+            return mapper.Map<List<SubjectDTO>>(subjects);
+        }
+
+        public async Task<SubjectDTO> GetSubjectWithId(int id)
+        {
+            Subject subject = await context.Subjects.FindAsync(id);
+
+            return mapper.Map<SubjectDTO>(subject);
+        }
+
         public async Task<int> CreateSubject(SubjectDTO subjcetDto)
         {
             var person = mapper.Map<Subject>(subjcetDto);

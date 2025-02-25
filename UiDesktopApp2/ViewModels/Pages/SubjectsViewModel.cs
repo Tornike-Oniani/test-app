@@ -6,13 +6,15 @@ using Wpf.Ui.Controls;
 using Wpf.Ui;
 using Wpf.Ui.Extensions;
 using UiDesktopApp2.DataAccess.Repositories;
+using UiDesktopApp2.Views.Pages;
 
 namespace UiDesktopApp2.ViewModels.Pages
 {
-    public partial class SubjectsViewModel(SubjectRepository personRepo, IContentDialogService contentDialogService, GlobalState globalState) : ObservableObject
+    public partial class SubjectsViewModel(SubjectRepository subjectRepo, IContentDialogService contentDialogService, GlobalState globalState, INavigationService navigationService) : ObservableObject, INavigationAware
     {
         #region Public properties
         public GlobalState GlobalState { get { return globalState; } }
+        public ObservableCollection<SubjectDTO> Subjects { get; set; } = new ObservableCollection<SubjectDTO>();
         #endregion
 
         #region Observable properties
@@ -46,7 +48,7 @@ namespace UiDesktopApp2.ViewModels.Pages
                 };
 
                 // Add test to database and retrieve its id
-                int id = await personRepo.CreateSubject(personDto);
+                int id = await subjectRepo.CreateSubject(personDto);
                 personDto.Id = id;
 
                 // Add test to global state
@@ -54,6 +56,23 @@ namespace UiDesktopApp2.ViewModels.Pages
             }
 
             ClearForm();
+        }
+        [RelayCommand]
+        private void OnOpenTestResult(ResultDTO result)
+        {
+            globalState.ResultToBrowse = result;
+            _ = navigationService.NavigateWithHierarchy(typeof(TestResultPage));
+        }
+        #endregion
+
+        #region INavigationAware
+        public async void OnNavigatedTo()
+        {
+            await Initialize();
+        }
+        public void OnNavigatedFrom()
+        {
+            
         }
         #endregion
 
@@ -66,6 +85,15 @@ namespace UiDesktopApp2.ViewModels.Pages
         {
             NewPersonFirstName = String.Empty;
             NewPersonLastName = String.Empty;
+        }
+        private async Task Initialize()
+        {
+            List<SubjectDTO> subjects = await subjectRepo.GetAllSubjectsWithTests();
+            Subjects.Clear();
+            foreach (SubjectDTO subject in subjects)
+            {
+                Subjects.Add(subject);
+            }
         }
         #endregion
     }
