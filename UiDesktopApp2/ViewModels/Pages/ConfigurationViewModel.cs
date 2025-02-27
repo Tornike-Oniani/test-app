@@ -7,7 +7,7 @@ using Wpf.Ui.Extensions;
 
 namespace UiDesktopApp2.ViewModels.Pages
 {
-    public partial class ConfigurationViewModel : ObservableObject
+    public partial class ConfigurationViewModel : ObservableObject, INavigationAware
     {
         #region Private memebers
         private readonly INavigationService _navigationService;
@@ -89,6 +89,19 @@ namespace UiDesktopApp2.ViewModels.Pages
             }
 
             throw new ArgumentException("Invalid argument");
+        }
+
+        public void OnNavigatedTo()
+        {
+            foreach (var test in GlobalState.Tests)
+            {
+                test.CheckForEmptySets();
+            }
+        }
+
+        public void OnNavigatedFrom()
+        {
+
         }
         #endregion
     }

@@ -21,6 +21,7 @@
         <helpers:SubtractConverter x:Key="Subtract" />
         <helpers:AddOneConverter x:Key="AddOneConverter" />
         <helpers:MultiParameterConverter x:Key="MultiParameter" />
+        <helpers:BoolToVisibilityConverter x:Key="BoolToVisibility" />
     </Page.Resources>
 
     <Grid x:Name="MyGrid">
@@ -37,7 +38,7 @@
                 </Label>
                 <ui:TextBox
                     PlaceholderText="Test name..."
-                    Text="{Binding DataContext.ViewModel.NewTestName, Source={x:Reference Name=MyGrid}}"
+                    Text="{Binding DataContext.ViewModel.NewTestName, Source={x:Reference Name=MyGrid}, UpdateSourceTrigger=PropertyChanged}"
                     />
             </StackPanel>
         </Grid.Resources>
@@ -57,29 +58,66 @@
                     >
                     <ui:ListView.ItemTemplate>
                         <DataTemplate>
-                            <Grid>
-                                <Border
-                                    Padding="4 2 4 2"
-                                    Cursor="Hand"
-                                    >
-                                    <Border.InputBindings>
-                                        <MouseBinding 
-                                            Gesture="LeftClick" 
-                                            Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Page}}, Path=DataContext.ViewModel.NavigateForwardCommand}"
+                            <Border
+                                Padding="4 2 4 2"
+                                >
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <StackPanel
+                                        Orientation="Horizontal"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Grid.Row="0"
+                                        >
+                                        <TextBlock
+                                            Text="{Binding Name}"
+                                            Margin="0 0 12 0"
+                                            />
+                                        <Label
+                                            Visibility="{Binding HasAlreadyRun, Converter={StaticResource BoolToVisibility}}"
+                                            ToolTip="The test is locked, because it has already run with results"
                                             >
-                                            <MouseBinding.CommandParameter>
-                                                <MultiBinding Converter="{StaticResource MultiParameter}">
-                                                    <Binding Path="." />
-                                                    <Binding Source="{x:Type local:TestManagePage}" />
-                                                </MultiBinding>
-                                            </MouseBinding.CommandParameter>
-                                        </MouseBinding>
-                                    </Border.InputBindings>
+                                            <Label.Content>
+                                                <StackPanel 
+                                                    Orientation="Horizontal"
+                                                    >
+                                                    <ui:SymbolIcon
+                                                        Symbol="LockClosed24"
+                                                        Margin="0 0 4 0"
+                                                        />
+                                                    <TextBlock
+                                                        Text="Locked for modification"
+                                                        />
+                                                </StackPanel>
+                                            </Label.Content>
+                                        </Label>
+                                    </StackPanel>
+                                    <ui:Button
+                                        Content="View"
+                                        Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Page}}, Path=DataContext.ViewModel.NavigateForwardCommand}"
+                                        Appearance="Secondary"
+                                        HorizontalAlignment="Right"
+                                        Grid.Row="0"
+                                        >
+                                        <ui:Button.CommandParameter>
+                                            <MultiBinding Converter="{StaticResource MultiParameter}">
+                                                <Binding Path="." />
+                                                <Binding Source="{x:Type local:TestManagePage}" />
+                                            </MultiBinding>
+                                        </ui:Button.CommandParameter>
+                                    </ui:Button>
                                     <TextBlock
-                                        Text="{Binding Name}"
+                                        Text="Contains empty image sets"
+                                        Visibility="{Binding ContainsEmptyImageSet, Converter={StaticResource BoolToVisibility}}"
+                                        Foreground="Red"
+                                        Margin="7 0 0 0"
+                                        Grid.Row="1"
                                         />
-                                </Border>
-                            </Grid>
+                                </Grid>
+                            </Border>
                         </DataTemplate>
                     </ui:ListView.ItemTemplate>
                 </ui:ListView>

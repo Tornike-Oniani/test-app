@@ -53,6 +53,8 @@ namespace UiDesktopApp2.ViewModels.Pages
 
                 // Add test to global state
                 GlobalState.Subjects.Add(personDto);
+
+                await Initialize();
             }
 
             ClearForm();

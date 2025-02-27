@@ -31,8 +31,12 @@ namespace UiDesktopApp2.DataAccess.Repositories
                 .ThenInclude(r => r.ImageSetTimes)
                 .Include(p => p.Results)
                 .ThenInclude(r => r.Test)
-                .Include(p => p.Results)
                 .ToListAsync();
+
+            foreach (Subject subject in subjects)
+            {
+                subject.Results = subject.Results.OrderByDescending(r => r.Date).ToList();
+            }
 
             return mapper.Map<List<SubjectDTO>>(subjects);
         }

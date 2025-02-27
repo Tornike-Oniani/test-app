@@ -51,7 +51,7 @@ namespace UiDesktopApp2.ViewModels.Windows
             _globalState = globalState;
             _contentDialogService = contentDialogService;
             _currentTest = _globalState.TestToRun!;
-            _resultTracker = new ResultTracker(CurrentTest.Id, _globalState.SubjectToTest.Id, globalState);
+            _resultTracker = new ResultTracker(CurrentTest.Id, _globalState.SubjectToTest.Id, globalState, settings);
             _imageDisplay = new ImageDisplay();
             _imageDisplay.ImageSets = CurrentTest.ImageSets.ToList();
             _resultRepo = resultRepo;

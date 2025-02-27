@@ -2,13 +2,14 @@
 using System.Windows.Input;
 using System.Windows.Media;
 using UiDesktopApp2.ViewModels.Pages;
+using Wpf.Ui.Controls;
 
 namespace UiDesktopApp2.Views.Pages
 {
     /// <summary>
     /// Interaction logic for TestPage.xaml
     /// </summary>
-    public partial class TestManagePage : Page
+    public partial class TestManagePage : INavigableView<TestManageViewModel>
     {
         public TestManageViewModel ViewModel { get; }
 

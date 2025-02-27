@@ -12,7 +12,7 @@ using Wpf.Ui.Controls;
 
 namespace UiDesktopApp2.ViewModels.Pages
 {
-    public partial class DashboardViewModel(INavigationService navigationService, TestRepository testRepo, SubjectRepository personRepo, GlobalState globalState, IServiceProvider serviceProvider) : ObservableObject, INavigationAware
+    public partial class DashboardViewModel(INavigationService navigationService, TestRepository testRepo, SubjectRepository personRepo, ResultRepository resultRepository, GlobalState globalState, IServiceProvider serviceProvider) : ObservableObject, INavigationAware
     {
         #region Private members
         private bool _isInitialized = false;
@@ -44,13 +44,11 @@ namespace UiDesktopApp2.ViewModels.Pages
         [RelayCommand]
         private void OnRunTest(Type type)
         {
+            this.SelectedTest.HasAlreadyRun = true;
             GlobalState.TestToRun = this.SelectedTest;
             Window testWindow = new TestWindow(serviceProvider);
             testWindow.Show();
             return;
-
-            GlobalState.TestToRun = this.SelectedTest;
-            _ = navigationService.NavigateWithHierarchy(type);
         }
         public void MoveItem(int oldIndex, int newIndex)
         {
@@ -69,6 +67,11 @@ namespace UiDesktopApp2.ViewModels.Pages
             if (!_isInitialized)
             {
                 await Initialize();
+            }
+
+            foreach (var test in GlobalState.Tests)
+            {
+                test.CheckForEmptySets();
             }
         }
 
@@ -94,6 +97,7 @@ namespace UiDesktopApp2.ViewModels.Pages
             GlobalState.Tests.Clear();
             foreach (var test in tests)
             {
+                test.HasAlreadyRun = await resultRepository.HasTestAlreadyRun(test.Id);
                 GlobalState.Tests.Add(test);
             }
 

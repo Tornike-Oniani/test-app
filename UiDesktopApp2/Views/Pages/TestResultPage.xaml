@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:UiDesktopApp2.Views.Pages"
+      xmlns:helpers="clr-namespace:UiDesktopApp2.Helpers"
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       d:DataContext="{d:DesignInstance local:TestResultPage,
                            IsDesignTimeCreatable=False}"
@@ -16,6 +17,11 @@
       ui:NavigationView.HeaderContent="Results"
       >
 
+    <Page.Resources>
+        <helpers:DoubleRounderConverter x:Key="DoubleRounder" />
+        <helpers:BoolToYesNoConverter x:Key="BoolToYesNo" />
+    </Page.Resources>
+    
     <StackPanel>
         <!-- Basic information -->
         <ui:Card
@@ -47,7 +53,7 @@
                     >
                     <Label FontSize="14">Date</Label>
                     <TextBlock
-                        Text="10/05/2025"
+                        Text="{Binding ViewModel.Result.Date}"
                         FontWeight="SemiBold"
                         FontSize="16"
                         />
@@ -70,18 +76,33 @@
                         HorizontalAlignment="Left"
                         >
                         <Label FontSize="14">Average recognition time</Label>
-                        <TextBlock
-                            Text="3.8s"
-                            FontWeight="SemiBold"
-                            FontSize="16"
-                            />
+                        <StackPanel
+                            Orientation="Horizontal"
+                            >
+                            <TextBlock
+                                Text="{Binding ViewModel.AverageTimePerKnownImage, StringFormat=Known: {0}s}"
+                                FontWeight="SemiBold"
+                                FontSize="16"
+                                Margin="0 0 7 0"
+                                />
+                            <Label
+                                Content="/"
+                                FontSize="16"
+                                />
+                            <TextBlock
+                                Text="{Binding ViewModel.AverageTimePerUnkownImage, StringFormat=Unknown: {0}s}"
+                                FontWeight="SemiBold"
+                                FontSize="16"
+                                Margin="7 0 0 0"
+                                />
+                        </StackPanel>
                     </StackPanel>
                     <StackPanel
                         HorizontalAlignment="Center"
                         >
                         <Label FontSize="14">Images Tested</Label>
                         <TextBlock
-                            Text="15"
+                            Text="{Binding ViewModel.Result.ImageSetTimes.Count}"
                             FontWeight="SemiBold"
                             FontSize="16"
                             />
@@ -91,7 +112,7 @@
                         >
                         <Label FontSize="14">Max time allowed</Label>
                         <TextBlock
-                            Text="10s"
+                            Text="{Binding ViewModel.Result.AvailableTimePerImageVariant, StringFormat={}{0}s}"
                             FontWeight="SemiBold"
                             FontSize="16"
                             />
@@ -133,7 +154,7 @@
                                             Grid.Column="1"
                                             />
                                         <TextBlock
-                                            Text="EFFICIENCY"
+                                            Text="IS UNKNOWN?"
                                             Grid.Column="2"
                                             />
                                     </Grid>
@@ -154,24 +175,21 @@
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
                                     <TextBlock
-                                        Text="Image name"
+                                        Text="{Binding ImageSet.Name}"
                                         FontSize="16"
                                         Grid.Column="0"
                                         />
                                     <TextBlock
-                                        Text="{Binding Seconds, StringFormat={}{0}s}"
+                                        Text="{Binding Seconds, StringFormat={}{0}s, Converter={StaticResource DoubleRounder}, ConverterParameter=2}"
                                         FontSize="16"
                                         Grid.Column="1"
                                         />
                                     <Border
-                                        CornerRadius="10 10 10 10"
-                                        Background="LightCyan"
-                                        Padding="12 4 12 4"
                                         HorizontalAlignment="Left"
                                         Grid.Column="2"
                                         >
                                         <TextBlock
-                                            Text="75%"
+                                            Text="{Binding ImageSet.IsUnknown, Converter={StaticResource BoolToYesNo}}"
                                             FontSize="16"
                                             />
                                     </Border>

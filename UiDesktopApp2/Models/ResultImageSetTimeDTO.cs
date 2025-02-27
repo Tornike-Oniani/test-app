@@ -12,6 +12,7 @@ namespace UiDesktopApp2.Models
         public double Seconds { get; set; }
         public bool Recognized { get; set; }
         public int ImageSetId { get; set; }
+        public ImageSetDTO ImageSet { get; set; }
         public int ResultId { get; set; }
     }
 }

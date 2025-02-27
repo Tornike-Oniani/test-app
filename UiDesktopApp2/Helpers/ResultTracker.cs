@@ -8,10 +8,12 @@ namespace UiDesktopApp2.Helpers
         private double _imageSetTime = 0;
         private readonly ResultDTO _result;
 
-        public ResultTracker(int testId, int subjectId, GlobalState globalState)
+        public ResultTracker(int testId, int subjectId, GlobalState globalState, Settings settings)
         {
             _result = new ResultDTO()
             {
+                Date = DateTime.Now,
+                AvailableTimePerImageVariant = settings.ImageTime,
                 TestId = testId,
                 SubjectId = subjectId,
                 ImageSetTimes = new List<ResultImageSetTimeDTO>()

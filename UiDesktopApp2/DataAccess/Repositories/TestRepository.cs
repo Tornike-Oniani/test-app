@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using System.Windows.Documents;
-using UiDesktopApp2.DataAccess;
 using UiDesktopApp2.DataAccess.Entities;
 using UiDesktopApp2.Models;
 
@@ -35,7 +33,6 @@ namespace UiDesktopApp2.DataAccess.Repositories
         public async Task UpdateTest(TestDTO testDto)
         {
             var existingTest = await context.Tests.FindAsync(testDto.Id);
-
 
             var test = mapper.Map(testDto, existingTest);
             await context.SaveChangesAsync();

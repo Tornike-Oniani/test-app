@@ -70,6 +70,7 @@ namespace UiDesktopApp2
                 services.AddScoped<TestRepository>();
                 services.AddScoped<SubjectRepository>();
                 services.AddScoped<ResultRepository>();
+                services.AddScoped<ImageSetRepository>();
 
                 // Main window with navigation
                 services.AddSingleton<INavigationWindow, MainWindow>();

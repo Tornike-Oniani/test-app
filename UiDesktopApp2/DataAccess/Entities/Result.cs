@@ -11,6 +11,8 @@ namespace UiDesktopApp2.DataAccess.Entities
     {
         [Key]
         public int Id { get; set; }
+        public DateTime Date { get; set; }
+        public int AvailableTimePerImageVariant { get; set; }
         public int SubjectId { get; set; }
         public Subject Subject { get; set; }
         public int TestId { get; set; }

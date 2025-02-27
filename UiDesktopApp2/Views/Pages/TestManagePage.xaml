@@ -13,6 +13,7 @@
       Title="TestPage"
       ui:NavigationView.HeaderContent="{Binding ViewModel.GlobalState.TestToManage.Name}"
       ScrollViewer.CanContentScroll="True"
+      x:Name="TestToManagePage"
       >
 
     <Page.Resources>
@@ -20,7 +21,9 @@
         <helpers:AddOneConverter x:Key="AddOne" />
         <helpers:ZeroToVisibilityConverter x:Key="ZeroToVisibility" />
         <helpers:BoolToVisibilityConverter x:Key="BoolToVisibility" />
+        <helpers:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibility" />
         <helpers:MultiParameterConverter x:Key="MultiParameter" />
+        <helpers:InverseBoolConverter x:Key="InverseBool" />
     </Page.Resources>
     
     <Grid Margin="0 0 0 12">
@@ -134,33 +137,40 @@
                                                     x:Name="Container"
                                                     >
                                                     <StackPanel>
+                                                        <!-- Image -->
                                                         <ui:Image
                                                         Height="40"
                                                         Source="{Binding Source}"
                                                         />
+                                                        <!-- Name -->
                                                         <TextBlock
                                                             Text="{Binding Name}"
                                                             HorizontalAlignment="Center"
                                                             TextAlignment="Center"
                                                             />
                                                     </StackPanel>
-                                                    <ui:Button
-                                                        Icon="{ui:SymbolIcon Delete12}"
-                                                        Visibility="{Binding ElementName=Container, Path=IsMouseOver, Converter={StaticResource BoolToVisibility}}"
-                                                        Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Page}}, Path=DataContext.ViewModel.RemoveImageVariantCommand}"
-                                                        Foreground="Red"
-                                                        Cursor="Hand"
+                                                    <Grid
+                                                        Visibility="{Binding ElementName=TestToManagePage, Path=DataContext.ViewModel.HasTestAlreadyRun, Converter={StaticResource InverseBoolToVisibility}}"
                                                         HorizontalAlignment="Right"
                                                         VerticalAlignment="Top"
                                                         Margin="-4 0 0 -4"
                                                         >
-                                                        <ui:Button.CommandParameter>
-                                                            <MultiBinding Converter="{StaticResource MultiParameter}">
-                                                                <Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}" Path="DataContext" />
-                                                                <Binding Path="." />
-                                                            </MultiBinding>
-                                                        </ui:Button.CommandParameter>
-                                                    </ui:Button>
+                                                        <!-- Delete variant -->
+                                                        <ui:Button
+                                                            Icon="{ui:SymbolIcon Delete12}"
+                                                            Visibility="{Binding ElementName=Container, Path=IsMouseOver, Converter={StaticResource BoolToVisibility}}"
+                                                            Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Page}}, Path=DataContext.ViewModel.RemoveImageVariantCommand}"
+                                                            Foreground="Red"
+                                                            Cursor="Hand"
+                                                            >
+                                                            <ui:Button.CommandParameter>
+                                                                <MultiBinding Converter="{StaticResource MultiParameter}">
+                                                                    <Binding RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}" Path="DataContext" />
+                                                                    <Binding Path="." />
+                                                                </MultiBinding>
+                                                            </ui:Button.CommandParameter>
+                                                        </ui:Button>
+                                                    </Grid>
                                                 </Grid>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
@@ -168,6 +178,7 @@
                                 </Grid>
                                 <!-- Actions -->
                                 <Grid
+                                    Visibility="{Binding ElementName=TestToManagePage, Path=DataContext.ViewModel.HasTestAlreadyRun, Converter={StaticResource InverseBoolToVisibility}}"
                                     Grid.Row="1"
                                     >
                                     <!--Add image button-->
@@ -183,11 +194,16 @@
                                         Orientation="Horizontal"
                                         HorizontalAlignment="Right"
                                         >
+                                        <!-- Unknown toggle -->
                                         <ui:ToggleSwitch
+                                            IsChecked="{Binding IsUnknown}"
+                                            Command="{Binding ElementName=TestToManagePage, Path=DataContext.ViewModel.ApplyUnknownStatusCommand}"
+                                            CommandParameter="{Binding}"
                                             OffContent="Unknown set?"
                                             OnContent="Unknown set?"
                                             Margin="0 0 12 0"
                                             />
+                                        <!-- Remove set -->
                                         <ui:Button
                                             Content="Remove set"
                                             Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Page}}, Path=DataContext.ViewModel.RemoveSetCommand}"
@@ -205,6 +221,7 @@
         <ui:Button
             Content="Add Set"
             Command="{Binding ViewModel.AddSetCommand}"
+            Visibility="{Binding ElementName=TestToManagePage, Path=DataContext.ViewModel.HasTestAlreadyRun, Converter={StaticResource InverseBoolToVisibility}}"
             Appearance="Primary"
             HorizontalAlignment="Stretch"
             Grid.Row="1"

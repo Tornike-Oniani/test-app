@@ -11,20 +11,22 @@ namespace UiDesktopApp2.ViewModels.Pages
 {
     public partial class TestResultViewModel : ObservableObject
     {
-        #region Private members
-        #endregion
-
         #region Observable properties
         [ObservableProperty]
         private ResultDTO result;
         [ObservableProperty]
         private SubjectDTO subject;
+        [ObservableProperty]
+        private double _averageTimePerKnownImage = 0;
+        [ObservableProperty]
+        private double _averageTimePerUnkownImage = 0;
         #endregion
 
         #region Constructors
         public TestResultViewModel(GlobalState globalState, SubjectRepository subjectRepo)
         {
             Result = globalState.ResultToBrowse;
+            CalculateAvaregaRecognitionTimes();
             Initialize(subjectRepo);
         }
         #endregion
@@ -33,6 +35,21 @@ namespace UiDesktopApp2.ViewModels.Pages
         private async Task Initialize(SubjectRepository subjectRepo)
         {
             Subject = await subjectRepo.GetSubjectWithId(Result.SubjectId);
+        }
+        private void CalculateAvaregaRecognitionTimes()
+        {
+            AverageTimePerKnownImage = Math.Round(
+                Result.ImageSetTimes.Where(ist => !ist.ImageSet.IsUnknown).Sum(ist => ist.Seconds)
+                /
+                Result.ImageSetTimes.Count(ist => !ist.ImageSet.IsUnknown),
+                2
+                );
+            AverageTimePerUnkownImage = Math.Round(
+                Result.ImageSetTimes.Where(ist => ist.ImageSet.IsUnknown).Sum(ist => ist.Seconds)
+                /
+                Result.ImageSetTimes.Count(ist => ist.ImageSet.IsUnknown),
+                2
+                );
         }
         #endregion
     }
