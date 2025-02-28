@@ -9,5 +9,6 @@ namespace UiDesktopApp2.Helpers
     public class Settings
     {
         public int ImageTime { get; set; } = 10;
+        public int MiddleImageTime { get; set; } = 2;
     }
 }

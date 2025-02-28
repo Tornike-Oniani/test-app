@@ -8,22 +8,23 @@ using Wpf.Ui;
 using Wpf.Ui.Extensions;
 using UiDesktopApp2.Views.Windows;
 using UiDesktopApp2.DataAccess.Repositories;
+using System.IO;
 
 namespace UiDesktopApp2.ViewModels.Windows
 {
     public partial class TestWindowViewModel : ObservableObject
     {
         #region Private memebers
-        private readonly INavigationService _navigationService;
         private readonly GlobalState _globalState;
-        private readonly IContentDialogService _contentDialogService;
         private readonly UITimer _uiTimer;
+        private readonly UITimer _middleUITimer;
         private readonly ResultTracker _resultTracker;
         private readonly ImageDisplay _imageDisplay;
-        private readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
         private readonly ResultRepository _resultRepo;
+        private readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
         private TestWindow _window;
         private bool _lastImageWasProcessed = false;
+        private bool _imageWasRecognized = false;
         #endregion
 
         #region Observable properties
@@ -34,22 +35,18 @@ namespace UiDesktopApp2.ViewModels.Windows
         [ObservableProperty]
         private string _countdownText = "0";
         [ObservableProperty]
-        private string _recognizeImageName = "";
+        private bool _isMiddleImageBeingShown = false;
         #endregion
 
         #region Constructors
         public TestWindowViewModel(
-            INavigationService navigationService, 
             GlobalState globalState, 
-            IContentDialogService contentDialogService, 
             Settings settings,
             ResultRepository resultRepo,
             TestWindow window
             )
         {
-            _navigationService = navigationService;
             _globalState = globalState;
-            _contentDialogService = contentDialogService;
             _currentTest = _globalState.TestToRun!;
             _resultTracker = new ResultTracker(CurrentTest.Id, _globalState.SubjectToTest.Id, globalState, settings);
             _imageDisplay = new ImageDisplay();
@@ -62,6 +59,12 @@ namespace UiDesktopApp2.ViewModels.Windows
                 UpdateUI = UpdateUI,
                 CompletedAction = OnTimerComplete
             };
+            _middleUITimer = new UITimer(1)
+            {
+                SecondsToCountDown = settings.MiddleImageTime,
+                UpdateUI = UpdateUI,
+                CompletedAction = OnMiddleTimerComplete
+            };
             CurrentImageSource = _imageDisplay.GetCurrentImage();
             _uiTimer.Start();
         }
@@ -71,6 +74,12 @@ namespace UiDesktopApp2.ViewModels.Windows
         [RelayCommand]
         private async Task OnRecognize()
         {
+            // If middle image is being shown there is nothing to recognize
+            if (IsMiddleImageBeingShown)
+            {
+                return;
+            }
+
             // Track Time elapsed
             _resultTracker.TrackResult(
                 _imageDisplay.GetCurrentSetId(),
@@ -83,16 +92,19 @@ namespace UiDesktopApp2.ViewModels.Windows
             if (!_imageDisplay.IsNextSetAvailable())
             {
                 await FinishTest();
-                //_navigationService.Navigate(typeof(TestResultPage));
                 return;
             }
 
+            _uiTimer.Pause();
+            // Show middle image
+            ShowMiddleImage();
+            _imageWasRecognized = true;            
+            _middleUITimer.Start();
             // Jump to the next set
-            CurrentImageSource = _imageDisplay.JumpToNextSet();
-            _uiTimer.Restart();
-            _lastImageWasProcessed = !_imageDisplay.IsNextImageAvailable() && !_imageDisplay.IsNextSetAvailable();
-            RecognizeImageName = String.Empty;
-
+            //HandleNextImage(_imageDisplay.JumpToNextSet());
+            //CurrentImageSource = _imageDisplay.JumpToNextSet();
+            //_uiTimer.Restart();
+            //_lastImageWasProcessed = !_imageDisplay.IsNextImageAvailable() && !_imageDisplay.IsNextSetAvailable();
         }
         #endregion
 
@@ -122,23 +134,52 @@ namespace UiDesktopApp2.ViewModels.Windows
             if (_lastImageWasProcessed)
             {
                 await FinishTest();
-                //_dispatcher.Invoke(() =>
-                //{
-                //    _navigationService.Navigate(typeof(TestResultPage));
-                //});
                 return;
             }
-
-            // Display image
-            CurrentImageSource = _imageDisplay.GetNextImage();
-            _uiTimer.Start();
-            _lastImageWasProcessed = !_imageDisplay.IsNextImageAvailable() && !_imageDisplay.IsNextSetAvailable();
+          
+            _uiTimer.Pause();
+            // If next image comes from the next set show middle image first
+            if (!_imageDisplay.IsThereNextImageInSet())
+            {
+                ShowMiddleImage();
+                _middleUITimer.Start();
+            }
+            // Display next image
+            else
+            {
+               HandleNextImage(_imageDisplay.GetNextImage());
+            }
+            
+            //CurrentImageSource = _imageDisplay.GetNextImage();
+            //_uiTimer.Restart();
+            //_lastImageWasProcessed = !_imageDisplay.IsNextImageAvailable() && !_imageDisplay.IsNextSetAvailable();
+        }
+        private void OnMiddleTimerComplete(double timeElapsed)
+        {
+            string nextImageSource = _imageWasRecognized ? _imageDisplay.JumpToNextSet() : _imageDisplay.GetNextImage();
+            HandleNextImage(nextImageSource);
+            _imageWasRecognized = false;
+            IsMiddleImageBeingShown = false;
         }
         private async Task FinishTest()
         {
             _uiTimer.Pause();
-            _window.Close();
+            await _dispatcher.InvokeAsync(() =>
+            {
+                _window.Close();
+            });
             await _resultRepo.CreateResult(_resultTracker.GetResult());
+        }
+        private void HandleNextImage(string imageSource)
+        {
+            CurrentImageSource = imageSource;
+            _uiTimer.Restart();
+            _lastImageWasProcessed = !_imageDisplay.IsNextImageAvailable() && !_imageDisplay.IsNextSetAvailable();
+        }
+        private void ShowMiddleImage()
+        {
+            IsMiddleImageBeingShown = true;
+            CurrentImageSource = Path.Combine(Environment.CurrentDirectory, "შუა.png");
         }
         #endregion
     }

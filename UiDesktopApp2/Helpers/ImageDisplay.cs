@@ -51,7 +51,11 @@ namespace UiDesktopApp2.Helpers
         {
             return _setIndex + 1 < ImageSets.Count;
         }
-        public bool IsNextImageAvailable(bool trace = false)
+        public bool IsNextImageAvailable()
+        {
+            return _imageIndex + 1 < ImageSets[_setIndex].Images.Count;
+        }
+        public bool IsThereNextImageInSet()
         {
             return _imageIndex + 1 < ImageSets[_setIndex].Images.Count;
         }

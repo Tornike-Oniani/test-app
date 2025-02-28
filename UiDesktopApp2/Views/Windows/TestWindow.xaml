@@ -13,9 +13,10 @@
         WindowState="Maximized"
         Focusable="True"
         Title="TestWindow" Height="450" Width="800">
-    
+
     <Window.Resources>
         <helpers:StringToImageSourceConverter x:Key="StringToImageSource" />
+        <helpers:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibility" />
     </Window.Resources>
 
     <Window.InputBindings>
@@ -49,13 +50,14 @@
                 Content="Recognize"
                 Command="{Binding ViewModel.RecognizeCommand}"
                 CommandParameter="{Binding}"
+                Visibility="{Binding ViewModel.IsMiddleImageBeingShown, Converter={StaticResource InverseBoolToVisibility}}"
                 Appearance="Primary"
                 Width="100"
                 Margin="0 0 48 0"
                 />
             <TextBlock
-            Text="{Binding ViewModel.CountdownText}"
-            />
+                Text="{Binding ViewModel.CountdownText}"
+                />
         </StackPanel>
     </Grid>
 </Window>

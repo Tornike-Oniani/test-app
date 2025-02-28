@@ -29,9 +29,7 @@ namespace UiDesktopApp2.Views.Windows
         public TestWindow(IServiceProvider serviceProvider)
         {
             ViewModel = new TestWindowViewModel(
-                serviceProvider.GetService(typeof(INavigationService)) as INavigationService,
                 serviceProvider.GetService(typeof(GlobalState)) as GlobalState,
-                serviceProvider.GetService(typeof(IContentDialogService)) as IContentDialogService,
                 serviceProvider.GetService(typeof(Settings)) as Settings,
                 serviceProvider.GetService(typeof(ResultRepository)) as ResultRepository,
                 this
