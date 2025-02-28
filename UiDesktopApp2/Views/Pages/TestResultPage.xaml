@@ -23,6 +23,13 @@
     </Page.Resources>
     
     <StackPanel>
+        <ui:Button
+            Content="Copy results"
+            Command="{Binding ViewModel.CopyResultsCommand}"
+            Appearance="Primary"
+            HorizontalAlignment="Right"
+            Margin="0 0 0 14"
+            />
         <!-- Basic information -->
         <ui:Card
             Margin="0 0 0 24"
