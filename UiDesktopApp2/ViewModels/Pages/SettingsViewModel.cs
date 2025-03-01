@@ -14,6 +14,10 @@ namespace UiDesktopApp2.ViewModels.Pages
         private ApplicationTheme _currentTheme = ApplicationTheme.Unknown;
         [ObservableProperty]
         private int _imageTime = 10;
+        [ObservableProperty]
+        private double _transitionImageDuration = 2;
+        [ObservableProperty]
+        private bool _isTimerVisible = false;
 
         public void OnNavigatedTo()
         {
@@ -24,6 +28,8 @@ namespace UiDesktopApp2.ViewModels.Pages
         public void OnNavigatedFrom() 
         {
             settings.ImageTime = ImageTime;
+            settings.TransitionImageDuration = TransitionImageDuration;
+            settings.IsTimerVisible = IsTimerVisible;
         }
 
         private void InitializeViewModel()

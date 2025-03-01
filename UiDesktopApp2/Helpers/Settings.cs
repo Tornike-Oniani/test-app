@@ -8,7 +8,8 @@ namespace UiDesktopApp2.Helpers
 {
     public class Settings
     {
-        public int ImageTime { get; set; } = 10;
-        public int MiddleImageTime { get; set; } = 2;
+        public double ImageTime { get; set; } = 10;
+        public double TransitionImageDuration { get; set; } = 2;
+        public bool IsTimerVisible { get; set; } = false;
     }
 }

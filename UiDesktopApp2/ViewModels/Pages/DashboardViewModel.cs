@@ -45,7 +45,8 @@ namespace UiDesktopApp2.ViewModels.Pages
         private void OnRunTest(Type type)
         {
             this.SelectedTest.HasAlreadyRun = true;
-            GlobalState.TestToRun = this.SelectedTest;
+            GlobalState.TestToRun = SelectedTest;
+            GlobalState.TestToRun.HasAlreadyRun = true;
             Window testWindow = new TestWindow(serviceProvider);
             testWindow.Show();
             return;

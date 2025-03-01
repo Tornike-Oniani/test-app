@@ -41,6 +41,23 @@
                     Text="{Binding DataContext.ViewModel.NewTestName, Source={x:Reference Name=MyGrid}, UpdateSourceTrigger=PropertyChanged}"
                     />
             </StackPanel>
+            <StackPanel
+                x:Key="RenameDialog"
+                Width="350"
+                HorizontalAlignment="Left"
+                >
+                <Label
+                    Margin="0 0 0 6"
+                    >
+                    <TextBlock
+                        Text="{Binding DataContext.ViewModel.CurrentTestNameToRename, Source={x:Reference Name=MyGrid}, StringFormat=Rename {0} to}"
+                        />
+                </Label>
+                <ui:TextBox
+                    PlaceholderText="New name..."
+                    Text="{Binding DataContext.ViewModel.TestRenameName, Source={x:Reference Name=MyGrid}}"
+                    />
+            </StackPanel>
         </Grid.Resources>
         <StackPanel>
             <ui:Button
@@ -95,20 +112,73 @@
                                             </Label.Content>
                                         </Label>
                                     </StackPanel>
-                                    <ui:Button
-                                        Content="View"
-                                        Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Page}}, Path=DataContext.ViewModel.NavigateForwardCommand}"
-                                        Appearance="Secondary"
+                                    <!-- Actions -->
+                                    <StackPanel
+                                        Orientation="Horizontal"
                                         HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
                                         Grid.Row="0"
                                         >
-                                        <ui:Button.CommandParameter>
-                                            <MultiBinding Converter="{StaticResource MultiParameter}">
-                                                <Binding Path="." />
-                                                <Binding Source="{x:Type local:TestManagePage}" />
-                                            </MultiBinding>
-                                        </ui:Button.CommandParameter>
-                                    </ui:Button>
+                                        <!-- View button -->
+                                        <ui:Button
+                                            Content="View"
+                                            Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Page}}, Path=DataContext.ViewModel.NavigateForwardCommand}"
+                                            Appearance="Secondary"
+                                            Margin="0 0 6 0"
+                                            >
+                                            <ui:Button.CommandParameter>
+                                                <MultiBinding Converter="{StaticResource MultiParameter}">
+                                                    <Binding Path="." />
+                                                    <Binding Source="{x:Type local:TestManagePage}" />
+                                                </MultiBinding>
+                                            </ui:Button.CommandParameter>
+                                        </ui:Button>
+                                        <!-- More flyout -->
+                                        <Grid
+                                            VerticalAlignment="Center"
+                                            >
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <ui:Button
+                                                Icon="{ui:SymbolIcon MoreVertical24}"
+                                                Command="{Binding Path=ViewModel.OpenFlyoutCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:ConfigurationPage}}"
+                                                CommandParameter="{Binding}"
+                                                VerticalAlignment="Center"
+                                                Margin="0 0 0 -16"
+                                                Grid.Row="0"
+                                                />
+                                            <ui:Flyout
+                                                IsOpen="{Binding IsFlyoutOpen, Mode=TwoWay}"
+                                                Placement="Bottom"
+                                                Grid.Row="1"
+                                                >
+                                                <StackPanel>
+                                                    <!-- Rename button -->
+                                                    <ui:Button
+                                                        Content="Rename"
+                                                        Command="{Binding Path=ViewModel.RenameTestCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:ConfigurationPage}}"
+                                                        Margin="0 0 0 6"
+                                                        >
+                                                        <ui:Button.CommandParameter>
+                                                            <MultiBinding Converter="{StaticResource MultiParameter}">
+                                                                <Binding Path="." />
+                                                                <Binding Source="{StaticResource RenameDialog}" />
+                                                            </MultiBinding>
+                                                        </ui:Button.CommandParameter>
+                                                    </ui:Button>
+                                                    <!-- Duplicate button -->
+                                                    <ui:Button
+                                                        Content="Duplicate"
+                                                        Command="{Binding Path=ViewModel.DuplicateTestCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:ConfigurationPage}}"
+                                                        CommandParameter="{Binding}"
+                                                        />
+                                                </StackPanel>
+                                            </ui:Flyout>
+                                        </Grid>
+                                    </StackPanel>
+                                    <!-- Empty warning message -->
                                     <TextBlock
                                         Text="Contains empty image sets"
                                         Visibility="{Binding ContainsEmptyImageSet, Converter={StaticResource BoolToVisibility}}"

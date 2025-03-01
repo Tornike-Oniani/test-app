@@ -1,4 +1,5 @@
-﻿using UiDesktopApp2.DataAccess.Repositories;
+﻿using System.Collections.ObjectModel;
+using UiDesktopApp2.DataAccess.Repositories;
 using UiDesktopApp2.Helpers;
 using UiDesktopApp2.Models;
 using Wpf.Ui;
@@ -18,6 +19,10 @@ namespace UiDesktopApp2.ViewModels.Pages
         #region Observable properties
         [ObservableProperty]
         private string? _newTestName;
+        [ObservableProperty]
+        private string _currentTestNameToRename;
+        [ObservableProperty]
+        private string _testRenameName;
         #endregion
 
         #region Public properties
@@ -91,6 +96,101 @@ namespace UiDesktopApp2.ViewModels.Pages
             throw new ArgumentException("Invalid argument");
         }
 
+        [RelayCommand]
+        private void OnOpenFlyout(TestDTO test)
+        {
+            if (!test.IsFlyoutOpen)
+            {
+                test.IsFlyoutOpen = true;
+            }
+        }
+
+        [RelayCommand]
+        private async Task OnRenameTest(object parameter)
+        {
+            if (parameter is object[] parameters && parameters.Length == 2)
+            {
+                TestDTO test = parameters[0] as TestDTO;
+                object content = parameters[1] as object;
+                CurrentTestNameToRename = test.Name;
+
+                ContentDialogResult result = await _contentDialogService.ShowSimpleDialogAsync(
+                new SimpleContentDialogCreateOptions()
+                {
+                    Title = "Rename test",
+                    Content = content,
+                    PrimaryButtonText = "Save",
+                    CloseButtonText = "Cancel"
+                }
+            );
+
+                // If user clicked yes and input was valid add the new test
+                if (result == ContentDialogResult.Primary && !String.IsNullOrEmpty(TestRenameName))
+                {
+                    test.Name = TestRenameName;
+
+                    await _testRepo.UpdateTest(test);
+                }
+
+                TestRenameName = String.Empty;
+            }
+            else
+            {
+                throw new ArgumentException("Invalid argument");
+            }
+        }
+
+        [RelayCommand]
+        private async Task OnDuplicateTest(TestDTO test)
+        {
+            // Create a test with copied name
+            TestDTO testCopy = new TestDTO()
+            {
+                Name = $"{test.Name} copy",
+            };
+
+            // Add the copy to database to set the id
+            int id = await _testRepo.CreateTest(testCopy);
+            testCopy.Id = id;
+
+            // Copy image sets
+            List<ImageSetDTO> imageSetsCopy = new List<ImageSetDTO>();
+
+            foreach (ImageSetDTO imageSet in test.ImageSets)
+            {
+                // Copy image variants for each set copy
+                List<ImageVariantDTO> imageVariantsCopy = new List<ImageVariantDTO>();
+
+                foreach (ImageVariantDTO imageVariant in imageSet.Images)
+                {
+                    imageVariantsCopy.Add(new ImageVariantDTO()
+                    {
+                        Id = 0,
+                        Name = imageVariant.Name,
+                        Source = imageVariant.Source
+                    });
+                }
+
+                ImageSetDTO imageSetCopy = new ImageSetDTO()
+                {
+                    Id = 0,
+                    TestId = id,
+                    Name = imageSet.Name,
+                    IsUnknown = imageSet.IsUnknown,
+                    Images = new ObservableCollection<ImageVariantDTO>(imageVariantsCopy)
+                };
+
+                imageSetsCopy.Add(imageSetCopy);
+            }
+
+            // Update the copy test to include image set copies
+            testCopy.ImageSets = new ObservableCollection<ImageSetDTO>(imageSetsCopy);
+            GlobalState.Tests.Add(testCopy);
+            await _testRepo.UpdateTest(testCopy);
+        }
+        #endregion
+
+        #region INavigationAware
         public void OnNavigatedTo()
         {
             foreach (var test in GlobalState.Tests)

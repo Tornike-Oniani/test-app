@@ -10,7 +10,7 @@ namespace UiDesktopApp2.Models
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }
-        public int AvailableTimePerImageVariant { get; set; }
+        public double AvailableTimePerImageVariant { get; set; }
         public int TestId { get; set; }
         public TestDTO Test { get; set; }
         public int SubjectId { get; set; }

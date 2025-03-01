@@ -36,6 +36,8 @@ namespace UiDesktopApp2.ViewModels.Windows
         private string _countdownText = "0";
         [ObservableProperty]
         private bool _isMiddleImageBeingShown = false;
+        [ObservableProperty]
+        private bool _isTimerVisible;
         #endregion
 
         #region Constructors
@@ -52,6 +54,7 @@ namespace UiDesktopApp2.ViewModels.Windows
             _imageDisplay = new ImageDisplay();
             _imageDisplay.ImageSets = CurrentTest.ImageSets.ToList();
             _resultRepo = resultRepo;
+            IsTimerVisible = settings.IsTimerVisible;
             _window = window;
             _uiTimer = new UITimer(1)
             {
@@ -61,7 +64,7 @@ namespace UiDesktopApp2.ViewModels.Windows
             };
             _middleUITimer = new UITimer(1)
             {
-                SecondsToCountDown = settings.MiddleImageTime,
+                SecondsToCountDown = settings.TransitionImageDuration,
                 UpdateUI = UpdateUI,
                 CompletedAction = OnMiddleTimerComplete
             };
@@ -116,7 +119,7 @@ namespace UiDesktopApp2.ViewModels.Windows
         #endregion
 
         #region Private helpers
-        private void UpdateUI(int seconds)
+        private void UpdateUI(double seconds)
         {
             // Update timer on UI
             CountdownText = seconds.ToString();

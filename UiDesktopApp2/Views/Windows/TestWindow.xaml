@@ -16,6 +16,7 @@
 
     <Window.Resources>
         <helpers:StringToImageSourceConverter x:Key="StringToImageSource" />
+        <helpers:BoolToVisibilityConverter x:Key="BoolToVisibility" />
         <helpers:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibility" />
     </Window.Resources>
 
@@ -56,6 +57,7 @@
                 Margin="0 0 48 0"
                 />
             <TextBlock
+                Visibility="{Binding ViewModel.IsTimerVisible, Converter={StaticResource BoolToVisibility}}"
                 Text="{Binding ViewModel.CountdownText}"
                 />
         </StackPanel>

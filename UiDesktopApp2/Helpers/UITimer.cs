@@ -16,15 +16,15 @@ namespace UiDesktopApp2.Helpers
         private readonly Timer _timer;
         private readonly Stopwatch _stopwatch;
         private readonly Dispatcher _dispatcher;
-        private int _initialSecondsToCountDown = 0;
-        private int _secondsToCountDown;
+        private double _initialSecondsToCountDown = 0;
+        private double _secondsToCountDown;
         #endregion
 
         #region Public properties
-        public Action<int> UpdateUI { get; set; }
+        public Action<double> UpdateUI { get; set; }
         public Action<double> CompletedAction { get; set; }
         public int IntervalInSeconds { get; set; }
-        public int SecondsToCountDown
+        public double SecondsToCountDown
         {
             get { return _secondsToCountDown; }
             set 

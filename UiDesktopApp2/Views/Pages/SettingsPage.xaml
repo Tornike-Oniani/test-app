@@ -48,12 +48,33 @@
             Margin="0 24 0 12"
             />
         <TextBlock 
-            Text="Image time"
+            Text="Allowed time per image variant"
             Margin="0 0 0 6"
             />
         <TextBox
             Text="{Binding ViewModel.ImageTime, UpdateSourceTrigger=PropertyChanged}"
             HorizontalAlignment="Left"
+            MinWidth="70"
+            Margin="0 0 0 12"
+            />
+        <TextBlock 
+            Text="Transition image duration"
+            Margin="0 0 0 6"
+            />
+        <TextBox
+            Text="{Binding ViewModel.TransitionImageDuration, UpdateSourceTrigger=PropertyChanged}"
+            HorizontalAlignment="Left"
+            MinWidth="70"
+            Margin="0 0 0 12"
+            />
+        <TextBlock 
+            Text="Should timer be visible during test?"
+            Margin="0 0 0 6"
+            />
+        <ui:ToggleSwitch
+            IsChecked="{Binding ViewModel.IsTimerVisible}"
+            OnContent="Visible"
+            OffContent="Hidden"
             />
         <!--<TextBlock
             Margin="0,24,0,0"
