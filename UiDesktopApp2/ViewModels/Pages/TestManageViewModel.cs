@@ -10,7 +10,7 @@ using Wpf.Ui.Extensions;
 
 namespace UiDesktopApp2.ViewModels.Pages
 {
-    public partial class TestManageViewModel(TestRepository testRepo, ImageSetRepository imageSetRepo, GlobalState globalState, IContentDialogService contentDialogService) : ObservableObject
+    public partial class TestManageViewModel(TestRepository testRepo, ImageSetRepository imageSetRepo, GlobalState globalState, IContentDialogService contentDialogService, ISnackbarService snackbarService) : ObservableObject
     {
         #region Public properties
         public GlobalState GlobalState 
@@ -88,48 +88,61 @@ namespace UiDesktopApp2.ViewModels.Pages
                 //  - file name must have following pattern "{name} {number}.{extension}"
 
                 // Sort by number descending
-                var sortedFiles = selectedFiles
-                    .OrderByDescending(item =>
-                    {
-                        string nameWithoutExtension = Path.GetFileNameWithoutExtension(item);
-                        string[] parts = nameWithoutExtension.Split(' ');
-                        return int.Parse(parts[^1]); // Extract the last part and parse it as an integer
-                    })
-                    .ToArray();
-
-                // Set image name based on file
-                string imageSetName = Path.GetFileNameWithoutExtension(selectedFiles[0]).Split(' ')[0];
-                imageSet.Name = imageSetName;
-
-                foreach (string file in sortedFiles)
+                try
                 {
-                    // Check anc create images folder in root
-                    string imagesDir = Path.Combine(Environment.CurrentDirectory, "Images");
-                    if (!Directory.Exists(imagesDir))
+                    var sortedFiles = selectedFiles
+                        .OrderByDescending(item =>
+                        {
+                            string nameWithoutExtension = Path.GetFileNameWithoutExtension(item);
+                            string[] parts = nameWithoutExtension.Split(' ');
+                            return int.Parse(parts[^1]); // Extract the last part and parse it as an integer
+                        })
+                        .ToArray();
+
+                    // Set image name based on file
+                    string imageSetName = Path.GetFileNameWithoutExtension(selectedFiles[0]).Split(' ')[0];
+                    imageSet.Name = imageSetName;
+
+                    foreach (string file in sortedFiles)
                     {
-                        Directory.CreateDirectory(imagesDir);
+                        // Check anc create images folder in root
+                        string imagesDir = Path.Combine(Environment.CurrentDirectory, "Images");
+                        if (!Directory.Exists(imagesDir))
+                        {
+                            Directory.CreateDirectory(imagesDir);
+                        }
+
+                        string fileName = Path.GetFileName(file);
+                        string localFilePath = Path.Combine(Environment.CurrentDirectory, "Images", fileName);
+
+                        // Copy only if file doesn't exist
+                        if (!File.Exists(localFilePath))
+                        {
+                            File.Copy(file, localFilePath);
+                        }
+
+                        // Add new path to db
+                        ImageVariantDTO image = new ImageVariantDTO()
+                        {
+                            Name = fileName,
+                            Source = localFilePath
+                        };
+                        imageSet.Images.Add(image);
                     }
 
-                    string fileName = Path.GetFileName(file);
-                    string localFilePath = Path.Combine(Environment.CurrentDirectory, "Images", fileName);
-
-                    // Copy only if file doesn't exist
-                    if (!File.Exists(localFilePath))
-                    {
-                        File.Copy(file, localFilePath);
-                    }
-
-                    // Add new path to db
-                    ImageVariantDTO image = new ImageVariantDTO()
-                    {
-                        Name = fileName,
-                        Source = localFilePath
-                    };
-                    imageSet.Images.Add(image);
+                    await testRepo.UpdateTest(GlobalState.TestToManage);
+                }
+                catch(Exception ex)
+                {
+                    snackbarService.Show(
+                        "Error",
+                        "Something went wrong, make sure that files have correct name of pattern - name followed by space followed by number.",
+                        Wpf.Ui.Controls.ControlAppearance.Secondary,
+                        new SymbolIcon(SymbolRegular.ErrorCircle24),
+                        TimeSpan.FromSeconds(7)
+                        );
                 }
             }
-
-            await testRepo.UpdateTest(GlobalState.TestToManage);
         }
 
         [RelayCommand]
