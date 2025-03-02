@@ -188,10 +188,13 @@
                                     >
                                     <ui:SymbolIcon
                                         Symbol="Person24"
-                                        Margin="0 0 12 0"
+                                        Width="16"
+                                        Height="16"
+                                        Margin="0 0 8 0"
                                         />
                                     <TextBlock 
                                         Text="{Binding FullName}"
+                                        VerticalAlignment="Center"
                                         FontSize="16"
                                         />
                                 </StackPanel>
