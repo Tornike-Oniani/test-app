@@ -27,12 +27,12 @@
                 </Label>
                 <ui:TextBox
                     PlaceholderText="First name..."
-                    Text="{Binding DataContext.ViewModel.NewPersonFirstName, Source={x:Reference Name=MyGrid}}"
+                    Text="{Binding DataContext.ViewModel.NewPersonFirstName, Source={x:Reference Name=MyGrid}, UpdateSourceTrigger=PropertyChanged}"
                     Margin="0 0 0 12"
                     />
                 <ui:TextBox
                     PlaceholderText="Last name..."
-                    Text="{Binding DataContext.ViewModel.NewPersonLastName, Source={x:Reference Name=MyGrid}}"
+                    Text="{Binding DataContext.ViewModel.NewPersonLastName, Source={x:Reference Name=MyGrid}, UpdateSourceTrigger=PropertyChanged}"
                     Margin="0 0 0 12"
                     />
             </StackPanel>

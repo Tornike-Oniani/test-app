@@ -55,7 +55,7 @@
                 </Label>
                 <ui:TextBox
                     PlaceholderText="New name..."
-                    Text="{Binding DataContext.ViewModel.TestRenameName, Source={x:Reference Name=MyGrid}}"
+                    Text="{Binding DataContext.ViewModel.TestRenameName, Source={x:Reference Name=MyGrid}, UpdateSourceTrigger=PropertyChanged}"
                     />
             </StackPanel>
         </Grid.Resources>
