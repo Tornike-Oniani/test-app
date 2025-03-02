@@ -48,6 +48,8 @@ namespace UiDesktopApp2
                 // Service containing navigation, same as INavigationWindow... but without window
                 services.AddSingleton<INavigationService, NavigationService>();
 
+                services.AddSingleton<ISnackbarService, SnackbarService>();
+
                 // Dialog service
                 services.AddSingleton<IContentDialogService, ContentDialogService>();
 

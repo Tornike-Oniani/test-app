@@ -1,4 +1,7 @@
-﻿using UiDesktopApp2.Helpers;
+﻿using System.IO;
+using System.Runtime.CompilerServices;
+using UiDesktopApp2.Helpers;
+using Wpf.Ui;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
 
@@ -6,6 +9,8 @@ namespace UiDesktopApp2.ViewModels.Pages
 {
     public partial class SettingsViewModel(Settings settings) : ObservableObject, INavigationAware
     {
+        private string _settingsFilePath = Path.Combine(Environment.CurrentDirectory, "settings.json");
+        private JsonWriterReader<SettingsData> _jsonReaderWriter;
         private bool _isInitialized = false;
 
         [ObservableProperty]
@@ -13,11 +18,11 @@ namespace UiDesktopApp2.ViewModels.Pages
         [ObservableProperty]
         private ApplicationTheme _currentTheme = ApplicationTheme.Unknown;
         [ObservableProperty]
-        private int _imageTime = 10;
+        private double _imageTime;
         [ObservableProperty]
-        private double _transitionImageDuration = 2;
+        private double _transitionImageDuration;
         [ObservableProperty]
-        private bool _isTimerVisible = false;
+        private bool _isTimerVisible;
 
         public void OnNavigatedTo()
         {
@@ -30,12 +35,21 @@ namespace UiDesktopApp2.ViewModels.Pages
             settings.ImageTime = ImageTime;
             settings.TransitionImageDuration = TransitionImageDuration;
             settings.IsTimerVisible = IsTimerVisible;
+            _jsonReaderWriter.WriteData(new SettingsData()
+            {
+                ImageTime = settings.ImageTime,
+                TransitionImageDuration = settings.TransitionImageDuration,
+                IsTimerVisible = settings.IsTimerVisible
+            });
         }
 
         private void InitializeViewModel()
         {
             CurrentTheme = ApplicationThemeManager.GetAppTheme();
-            AppVersion = $"UiDesktopApp1 - {GetAssemblyVersion()}";
+            _jsonReaderWriter = new JsonWriterReader<SettingsData>(_settingsFilePath);
+            ImageTime = settings.ImageTime;
+            TransitionImageDuration = settings.TransitionImageDuration;
+            IsTimerVisible = settings.IsTimerVisible;
 
             _isInitialized = true;
         }

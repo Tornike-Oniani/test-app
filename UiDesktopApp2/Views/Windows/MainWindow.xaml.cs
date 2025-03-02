@@ -13,7 +13,8 @@ namespace UiDesktopApp2.Views.Windows
             MainWindowViewModel viewModel,
             IPageService pageService,
             INavigationService navigationService,
-            IContentDialogService contentDialogService
+            IContentDialogService contentDialogService,
+            ISnackbarService snackbarService
         )
         {
             ViewModel = viewModel;
@@ -26,6 +27,7 @@ namespace UiDesktopApp2.Views.Windows
 
             navigationService.SetNavigationControl(RootNavigation);
             contentDialogService.SetDialogHost(RootContentDialog);
+            snackbarService.SetSnackbarPresenter(SnackbarPresenter);
         }
 
         #region INavigationWindow methods

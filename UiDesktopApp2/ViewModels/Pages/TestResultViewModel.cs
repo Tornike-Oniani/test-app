@@ -6,11 +6,17 @@ using System.Threading.Tasks;
 using UiDesktopApp2.DataAccess.Repositories;
 using UiDesktopApp2.Helpers;
 using UiDesktopApp2.Models;
+using Wpf.Ui;
+using Wpf.Ui.Controls;
 
 namespace UiDesktopApp2.ViewModels.Pages
 {
     public partial class TestResultViewModel : ObservableObject
     {
+        #region Private members
+        private ISnackbarService _snackbarService;
+        #endregion
+
         #region Observable properties
         [ObservableProperty]
         private ResultDTO _result;
@@ -23,8 +29,9 @@ namespace UiDesktopApp2.ViewModels.Pages
         #endregion
 
         #region Constructors
-        public TestResultViewModel(GlobalState globalState, SubjectRepository subjectRepo)
+        public TestResultViewModel(GlobalState globalState, SubjectRepository subjectRepo, ISnackbarService snackbarService)
         {
+            _snackbarService = snackbarService;
             Result = globalState.ResultToBrowse;
             CalculateAvaregaRecognitionTimes();
             Initialize(subjectRepo);
@@ -58,6 +65,13 @@ namespace UiDesktopApp2.ViewModels.Pages
             }
 
             Clipboard.SetText(resultBuilder.ToString());
+            _snackbarService.Show(
+                "Results",
+                "Results copied successfully",
+                Wpf.Ui.Controls.ControlAppearance.Secondary,
+                new SymbolIcon(SymbolRegular.Copy24),
+                TimeSpan.FromSeconds(2)
+                );
         }
         #endregion
 
