@@ -5,6 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:UiDesktopApp2.Views.Pages"
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:controls="clr-namespace:Wpf.Ui.Controls"
       d:DataContext="{d:DesignInstance local:SubjectsPage,
                                  IsDesignTimeCreatable=False}"
       mc:Ignorable="d" 
@@ -14,6 +15,123 @@
       Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       Title="SubjectsPage">
 
+    <Page.Resources>
+        <Style x:Key="CustomTreeViewItem" TargetType="{x:Type TreeViewItem}">
+            <!--  Universal WPF UI focus  -->
+            <Setter Property="FocusVisualStyle" Value="{DynamicResource DefaultControlFocusVisualStyle}" />
+            <!--  Universal WPF UI focus  -->
+            <Setter Property="Foreground" Value="{DynamicResource TreeViewItemForeground}" />
+            <Setter Property="Background" Value="{DynamicResource TreeViewItemBackground}" />
+            <Setter Property="Padding" Value="4" />
+            <Setter Property="FontSize" Value="{StaticResource TreeViewItemFontSize}" />
+            <Setter Property="Border.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+            <Setter Property="IsTabStop" Value="True" />
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TreeViewItem}">
+                        <Grid Background="{TemplateBinding Background}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Border
+                            x:Name="Border"
+                            Grid.Row="0"
+                            CornerRadius="{TemplateBinding Border.CornerRadius}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" MinWidth="19" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Rectangle
+                                        x:Name="ActiveRectangle"
+                                        Grid.Column="0"
+                                        Width="3"
+                                        Height="16"
+                                        Margin="0,0,0,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Fill="{DynamicResource TreeViewItemSelectionIndicatorForeground}"
+                                        RadiusX="2"
+                                        RadiusY="2"
+                                        Visibility="Collapsed" />
+                                    <ToggleButton
+                                        x:Name="Expander"
+                                        Grid.Column="0"
+                                        Margin="8,0"
+                                        ClickMode="Press"
+                                        IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
+                                        Style="{StaticResource ExpandCollapseToggleButtonStyle}" />
+                                    <ContentPresenter
+                                        x:Name="PART_Header"
+                                        Grid.Column="1"
+                                        Margin="{TemplateBinding Padding}"
+                                        HorizontalAlignment="{Binding HorizontalContentAlignment}"
+                                        ContentSource="Header"
+                                        TextElement.FontSize="{TemplateBinding FontSize}" 
+                                        />
+                                </Grid>
+                            </Border>
+                            <Grid Grid.Row="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" MinWidth="19" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <ItemsPresenter
+                                    x:Name="ItemsHost"
+                                    Grid.Column="1"
+                                    Visibility="Collapsed" 
+                                    />
+                            </Grid>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="HasItems" Value="False">
+                                <Setter TargetName="Expander" Property="Visibility" Value="Hidden" />
+                            </Trigger>
+                            <Trigger Property="IsExpanded" Value="True">
+                                <Setter TargetName="ItemsHost" Property="Visibility" Value="Visible" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="{DynamicResource TreeViewItemBackgroundPointerOver}" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="{DynamicResource TreeViewItemBackgroundSelected}" />
+                                <Setter TargetName="ActiveRectangle" Property="Visibility" Value="Visible" />
+                            </Trigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="HasHeader" Value="False" />
+                                    <Condition Property="Width" Value="Auto" />
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="PART_Header" Property="MinWidth" Value="75" />
+                            </MultiTrigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="HasHeader" Value="False" />
+                                    <Condition Property="Height" Value="Auto" />
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="PART_Header" Property="MinHeight" Value="19" />
+                            </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="VirtualizingPanel.IsVirtualizing" Value="True">
+                    <Setter Property="ItemsPanel">
+                        <Setter.Value>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel />
+                            </ItemsPanelTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Page.Resources>
+    
     <Grid x:Name="MyGrid">
         <Grid.Resources>
             <StackPanel 
@@ -52,38 +170,50 @@
                 <TreeView
                     ItemsSource="{Binding ViewModel.Subjects}"
                     AllowDrop="True"
+                    HorizontalContentAlignment="Stretch"
+                    ItemContainerStyle="{StaticResource CustomTreeViewItem}"
                     >
                     <TreeView.ItemTemplate>
                         <HierarchicalDataTemplate ItemsSource="{Binding Results}">
                             <!-- Subject item -->
-                            <StackPanel
-                                Orientation="Horizontal"
-                                >
-                                <ui:SymbolIcon
-                                    Symbol="Person24"
-                                    Margin="0 0 12 0"
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <!-- Name-->
+                                <StackPanel
+                                    Orientation="Horizontal"
+                                    Grid.Column="0"
+                                    >
+                                    <ui:SymbolIcon
+                                        Symbol="Person24"
+                                        Margin="0 0 12 0"
+                                        />
+                                    <TextBlock 
+                                        Text="{Binding FullName}"
+                                        FontSize="16"
+                                        />
+                                </StackPanel>
+                                <!-- Delete button -->
+                                <ui:Button
+                                    Content="Delete"
+                                    Command="{Binding Path=ViewModel.DeleteSubjectCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:SubjectsPage}}"
+                                    CommandParameter="{Binding}"
+                                    Grid.Column="1"
                                     />
-                                <TextBlock 
-                                    Text="{Binding FirstName}" 
-                                    Margin="0 0 6 0"
-                                    />
-                                <TextBlock
-                                    Text="{Binding LastName}"
-                                    />
-                            </StackPanel>
+                            </Grid>
                             <HierarchicalDataTemplate.ItemTemplate>
                                 <DataTemplate>
                                     <!-- Test item -->
-                                    <Border>
-                                        <Border.InputBindings>
-                                            <MouseBinding 
-                                                Gesture="LeftClick"
-                                                Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Page}}, Path=DataContext.ViewModel.OpenTestResultCommand}"
-                                                CommandParameter="{Binding}"
-                                                />
-                                        </Border.InputBindings>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
                                         <StackPanel
                                             Orientation="Horizontal"
+                                            Grid.Column="0"
                                             >
                                             <ui:SymbolIcon
                                                 Symbol="DocumentBulletList24"
@@ -91,13 +221,62 @@
                                                 />
                                             <TextBlock 
                                                 Text="{Binding Test.Name}"
+                                                FontSize="16"
                                                 Margin="0 0 8 0"
                                                 />
                                             <Label
                                                 Content="{Binding Date}"
+                                                FontSize="16"
+                                                VerticalAlignment="Center"
                                                 />
                                         </StackPanel>
-                                    </Border>
+                                        <!-- Actions -->
+                                        <StackPanel
+                                            Orientation="Horizontal"
+                                            VerticalAlignment="Center"
+                                            Grid.Column="1"
+                                            >
+                                            <!-- View button -->
+                                            <ui:Button
+                                                Content="View"
+                                                Command="{Binding Path=ViewModel.OpenTestResultCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:SubjectsPage}}"
+                                                CommandParameter="{Binding}"
+                                                Appearance="Secondary"
+                                                Margin="0 0 6 0"
+                                                />
+                                            <!-- More flyout -->
+                                            <Grid
+                                                VerticalAlignment="Center"
+                                                >
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
+                                                <ui:Button
+                                                    Icon="{ui:SymbolIcon MoreVertical24}"
+                                                    Command="{Binding Path=ViewModel.OpenFlyoutCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:SubjectsPage}}"
+                                                    CommandParameter="{Binding}"
+                                                    VerticalAlignment="Center"
+                                                    Margin="0 0 0 -16"
+                                                    Grid.Row="0"
+                                                    />
+                                                <ui:Flyout
+                                                    IsOpen="{Binding IsFlyoutOpen, Mode=TwoWay}"
+                                                    Placement="Bottom"
+                                                    Grid.Row="1"
+                                                    >
+                                                    <StackPanel>
+                                                        <!-- Delete button -->
+                                                        <ui:Button
+                                                            Content="Delete"
+                                                            Command="{Binding Path=ViewModel.DeleteResultCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:SubjectsPage}}"
+                                                            CommandParameter="{Binding}"
+                                                            />
+                                                    </StackPanel>
+                                                </ui:Flyout>
+                                            </Grid>
+                                        </StackPanel>
+                                    </Grid>
                                 </DataTemplate>
                             </HierarchicalDataTemplate.ItemTemplate>
                         </HierarchicalDataTemplate>

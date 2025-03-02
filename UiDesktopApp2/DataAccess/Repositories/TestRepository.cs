@@ -37,5 +37,15 @@ namespace UiDesktopApp2.DataAccess.Repositories
             var test = mapper.Map(testDto, existingTest);
             await context.SaveChangesAsync();
         }
+
+        public async Task DeleteTestById(int id)
+        {
+            Test test = await context.Tests.FindAsync(id);
+            if (test != null)
+            {
+                context.Tests.Remove(test);
+                await context.SaveChangesAsync();
+            }
+        }
     }
 }

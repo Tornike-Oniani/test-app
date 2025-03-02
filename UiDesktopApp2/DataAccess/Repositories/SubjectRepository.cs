@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UiDesktopApp2.DataAccess;
 using UiDesktopApp2.DataAccess.Entities;
+using UiDesktopApp2.Migrations;
 using UiDesktopApp2.Models;
 
 namespace UiDesktopApp2.DataAccess.Repositories
@@ -54,6 +55,17 @@ namespace UiDesktopApp2.DataAccess.Repositories
             context.Subjects.Add(person);
             await context.SaveChangesAsync();
             return person.Id;
+        }
+
+        public async Task DeleteSubject(int subjectId)
+        {
+            Subject subject = await context.Subjects.FindAsync(subjectId);
+
+            if (subject != null)
+            {
+                context.Remove(subject);
+                await context.SaveChangesAsync();
+            }
         }
     }
 }

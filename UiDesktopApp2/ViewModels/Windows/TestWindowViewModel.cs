@@ -25,6 +25,7 @@ namespace UiDesktopApp2.ViewModels.Windows
         private TestWindow _window;
         private bool _lastImageWasProcessed = false;
         private bool _imageWasRecognized = false;
+        private Settings _settings;
         #endregion
 
         #region Observable properties
@@ -56,6 +57,7 @@ namespace UiDesktopApp2.ViewModels.Windows
             _resultRepo = resultRepo;
             IsTimerVisible = settings.IsTimerVisible;
             _window = window;
+            _settings = settings;
             _uiTimer = new UITimer(1)
             {
                 SecondsToCountDown = settings.ImageTime,
@@ -100,14 +102,16 @@ namespace UiDesktopApp2.ViewModels.Windows
 
             _uiTimer.Pause();
             // Show middle image
-            ShowMiddleImage();
-            _imageWasRecognized = true;            
-            _middleUITimer.Start();
-            // Jump to the next set
-            //HandleNextImage(_imageDisplay.JumpToNextSet());
-            //CurrentImageSource = _imageDisplay.JumpToNextSet();
-            //_uiTimer.Restart();
-            //_lastImageWasProcessed = !_imageDisplay.IsNextImageAvailable() && !_imageDisplay.IsNextSetAvailable();
+            if (_settings.TransitionImageDuration > 0)
+            {
+                ShowMiddleImage();
+                _imageWasRecognized = true;            
+                _middleUITimer.Start();
+            }
+            else
+            {
+                HandleNextImage(_imageDisplay.JumpToNextSet());
+            }
         }
         #endregion
 
@@ -142,7 +146,7 @@ namespace UiDesktopApp2.ViewModels.Windows
           
             _uiTimer.Pause();
             // If next image comes from the next set show middle image first
-            if (!_imageDisplay.IsThereNextImageInSet())
+            if (!_imageDisplay.IsThereNextImageInSet() && _settings.TransitionImageDuration > 0)
             {
                 ShowMiddleImage();
                 _middleUITimer.Start();
@@ -151,11 +155,7 @@ namespace UiDesktopApp2.ViewModels.Windows
             else
             {
                HandleNextImage(_imageDisplay.GetNextImage());
-            }
-            
-            //CurrentImageSource = _imageDisplay.GetNextImage();
-            //_uiTimer.Restart();
-            //_lastImageWasProcessed = !_imageDisplay.IsNextImageAvailable() && !_imageDisplay.IsNextSetAvailable();
+            }           
         }
         private void OnMiddleTimerComplete(double timeElapsed)
         {

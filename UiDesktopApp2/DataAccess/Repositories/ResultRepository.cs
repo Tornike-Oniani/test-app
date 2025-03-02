@@ -26,5 +26,16 @@ namespace UiDesktopApp2.DataAccess.Repositories
         {
             return await context.Results.AnyAsync(r => r.TestId == testId);
         }
+        
+        public async Task DeleteResult(int resultId)
+        {
+            Result result = await context.Results.FindAsync(resultId);
+
+            if (result != null)
+            {
+                context.Results.Remove(result);
+                await context.SaveChangesAsync();
+            }
+        }
     }
 }

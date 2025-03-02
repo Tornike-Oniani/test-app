@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace UiDesktopApp2.Models
 {
-    public class ResultDTO
+    public partial class ResultDTO : ObservableObject
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }
@@ -15,5 +15,8 @@ namespace UiDesktopApp2.Models
         public TestDTO Test { get; set; }
         public int SubjectId { get; set; }
         public List<ResultImageSetTimeDTO> ImageSetTimes { get; set; }
+
+        [ObservableProperty]
+        private bool _isFlyoutOpen;
     }
 }

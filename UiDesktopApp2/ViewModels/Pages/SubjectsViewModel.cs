@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using UiDesktopApp2.DataAccess.Entities;
 using UiDesktopApp2.Helpers;
 using UiDesktopApp2.Models;
 using Wpf.Ui.Controls;
@@ -10,7 +9,7 @@ using UiDesktopApp2.Views.Pages;
 
 namespace UiDesktopApp2.ViewModels.Pages
 {
-    public partial class SubjectsViewModel(SubjectRepository subjectRepo, IContentDialogService contentDialogService, GlobalState globalState, INavigationService navigationService) : ObservableObject, INavigationAware
+    public partial class SubjectsViewModel(SubjectRepository subjectRepo, ResultRepository resultRepo, TestRepository testRepo, IContentDialogService contentDialogService, GlobalState globalState, INavigationService navigationService) : ObservableObject, INavigationAware
     {
         #region Public properties
         public GlobalState GlobalState { get { return globalState; } }
@@ -59,11 +58,65 @@ namespace UiDesktopApp2.ViewModels.Pages
 
             ClearForm();
         }
+
         [RelayCommand]
         private void OnOpenTestResult(ResultDTO result)
         {
             globalState.ResultToBrowse = result;
             _ = navigationService.NavigateWithHierarchy(typeof(TestResultPage));
+        }
+
+        [RelayCommand]
+        private void OnOpenFlyout(ResultDTO result)
+        {
+            if (!result.IsFlyoutOpen)
+            {
+                result.IsFlyoutOpen = true;
+            }
+        }
+
+        [RelayCommand]
+        private async Task OnDeleteResult(ResultDTO result)
+        {
+            ContentDialogResult dialogResult = await contentDialogService.ShowSimpleDialogAsync(
+               new SimpleContentDialogCreateOptions()
+               {
+                   Title = "Delete result",
+                   Content = $"Are you sure you want to delete the result of\n'{result.Test.Name}' test?",
+                   PrimaryButtonText = "Delete",
+                   CloseButtonText = "Cancel"
+               }
+           );
+
+            if (dialogResult == ContentDialogResult.Primary)
+            {
+                await resultRepo.DeleteResult(result.Id);
+                await Initialize();
+            }
+        }
+
+        [RelayCommand]
+        private async Task OnDeleteSubject(SubjectDTO subject)
+        {
+            ContentDialogResult dialogResult = await contentDialogService.ShowSimpleDialogAsync(
+               new SimpleContentDialogCreateOptions()
+               {
+                   Title = "Delete subject",
+                   Content = $"Are you sure you want to delete '{subject.FullName}'\nand all their results?",
+                   PrimaryButtonText = "Delete",
+                   CloseButtonText = "Cancel"
+               }
+           );
+
+            if (dialogResult == ContentDialogResult.Primary)
+            {
+                // Remove from database
+                await subjectRepo.DeleteSubject(subject.Id);
+                await Initialize();
+
+                // Remove from memory
+                globalState.Subjects.Remove(globalState.Subjects.Single(s => s.Id == subject.Id));
+            }
         }
         #endregion
 

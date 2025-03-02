@@ -14,6 +14,7 @@ namespace UiDesktopApp2.ViewModels.Pages
         private readonly INavigationService _navigationService;
         private readonly IContentDialogService _contentDialogService;
         private readonly TestRepository _testRepo;
+        private readonly ResultRepository _resultRepo;
         #endregion
 
         #region Observable properties
@@ -35,12 +36,14 @@ namespace UiDesktopApp2.ViewModels.Pages
                 INavigationService navigationService, 
                 IContentDialogService contentDialogService,
                 TestRepository testRepo,
+                ResultRepository resultRepo,
                 GlobalState globalState
             )
         {
             _navigationService = navigationService;
             _contentDialogService = contentDialogService;
             _testRepo = testRepo;
+            _resultRepo = resultRepo;
             GlobalState = globalState;
         }
         #endregion
@@ -188,11 +191,39 @@ namespace UiDesktopApp2.ViewModels.Pages
             GlobalState.Tests.Add(testCopy);
             await _testRepo.UpdateTest(testCopy);
         }
+
+        [RelayCommand]
+        private async Task OnDeleteTest(TestDTO test)
+        {
+            ContentDialogResult result = await _contentDialogService.ShowSimpleDialogAsync(
+                new SimpleContentDialogCreateOptions()
+                {
+                    Title = "Delete test",
+                    Content = $"Are you sure you want to delete '{test.Name}'? It will also delete corresponding results.",
+                    PrimaryButtonText = "Delete",
+                    CloseButtonText = "Cancel"
+                }
+            );
+
+            // If user clicked yes and input was valid add the new test
+            if (result == ContentDialogResult.Primary)
+            {
+                await _testRepo.DeleteTestById(test.Id);
+                GlobalState.Tests.Remove(test);
+            }
+        }
         #endregion
 
         #region INavigationAware
-        public void OnNavigatedTo()
+        public async void OnNavigatedTo()
         {
+            // Update test has already run status
+            foreach (var test in GlobalState.Tests)
+            {
+                test.HasAlreadyRun = await _resultRepo.HasTestAlreadyRun(test.Id);
+            }
+
+            // Check empty sets
             foreach (var test in GlobalState.Tests)
             {
                 test.CheckForEmptySets();
