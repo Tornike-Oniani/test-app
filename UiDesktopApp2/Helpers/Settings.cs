@@ -28,9 +28,12 @@ namespace UiDesktopApp2.Helpers
                 JsonWriterReader<SettingsData> _jsonReaderWriter = new JsonWriterReader<SettingsData>(filePath);
                 SettingsData savedSettings = _jsonReaderWriter.ReadData();
 
-                ImageTime = savedSettings.ImageTime;
-                TransitionImageDuration = savedSettings.TransitionImageDuration;
-                IsTimerVisible = savedSettings.IsTimerVisible;
+                if (savedSettings != null)
+                {
+                    ImageTime = savedSettings.ImageTime;
+                    TransitionImageDuration = savedSettings.TransitionImageDuration;
+                    IsTimerVisible = savedSettings.IsTimerVisible;
+                }
             }
         }
     }
