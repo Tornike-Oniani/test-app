@@ -18,13 +18,23 @@
     mc:Ignorable="d">
     <Page.Resources>
         <helpers:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
+        <helpers:BoolToBorderThicknessConverter x:Key="BoolToBorderThickness" />
     </Page.Resources>
 
     <StackPanel>
-        <TextBlock
-            FontSize="20"
-            FontWeight="Medium"
-            Text="Personalization" />
+        <Grid>
+            <TextBlock
+                Text="Personalization"
+                FontSize="20"
+                FontWeight="Medium"
+                HorizontalAlignment="Left"
+                />
+            <Label
+                Content="Made by Tornike Oniani"
+                FontSize="16"
+                HorizontalAlignment="Right"
+                />
+        </Grid>
         <TextBlock Margin="0,12,0,0" Text="Theme" />
         <RadioButton
             Margin="0,12,0,0"
@@ -75,7 +85,32 @@
             IsChecked="{Binding ViewModel.IsTimerVisible}"
             OnContent="Visible"
             OffContent="Hidden"
+            Margin="0 0 0 8"
             />
+        <StackPanel 
+            Orientation="Horizontal"
+            >
+            <Border
+                BorderBrush="#ffcc00"
+                BorderThickness="{Binding ViewModel.IsNewSettingsPending, Converter={StaticResource BoolToBorderThickness}}"
+                CornerRadius="4 4 4 4"
+                Padding="2 2 2 2"                
+                Margin="0 0 6 0"
+                >
+                <ui:Button
+                    Content="Save"
+                    Command="{Binding ViewModel.SaveSettingsCommand}"
+                    Appearance="Primary"
+                    Width="120"
+                    />
+            </Border>
+            <ui:Button
+                Content="Reset Defaults"
+                Command="{Binding ViewModel.ResetDefaultsCommand}"
+                Appearance="Secondary"
+                Width="120"
+                />
+        </StackPanel>
         <!--<TextBlock
             Margin="0,24,0,0"
             FontSize="20"

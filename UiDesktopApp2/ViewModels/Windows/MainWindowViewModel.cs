@@ -6,7 +6,7 @@ namespace UiDesktopApp2.ViewModels.Windows
     public partial class MainWindowViewModel : ObservableObject
     {
         [ObservableProperty]
-        private string _applicationTitle = "WPF UI - UiDesktopApp2";
+        private string _applicationTitle = "Visible Repetition Priming";
 
         [ObservableProperty]
         private ObservableCollection<object> _menuItems = new()

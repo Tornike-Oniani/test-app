@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.ComponentModel;
+using System.IO;
 using System.Runtime.CompilerServices;
 using UiDesktopApp2.Helpers;
 using Wpf.Ui;
@@ -17,12 +18,15 @@ namespace UiDesktopApp2.ViewModels.Pages
         private string _appVersion = String.Empty;
         [ObservableProperty]
         private ApplicationTheme _currentTheme = ApplicationTheme.Unknown;
+
         [ObservableProperty]
         private double _imageTime;
         [ObservableProperty]
         private double _transitionImageDuration;
         [ObservableProperty]
         private bool _isTimerVisible;
+        [ObservableProperty]
+        private bool _isNewSettingsPending;
 
         public void OnNavigatedTo()
         {
@@ -32,15 +36,7 @@ namespace UiDesktopApp2.ViewModels.Pages
 
         public void OnNavigatedFrom() 
         {
-            settings.ImageTime = ImageTime;
-            settings.TransitionImageDuration = TransitionImageDuration;
-            settings.IsTimerVisible = IsTimerVisible;
-            _jsonReaderWriter.WriteData(new SettingsData()
-            {
-                ImageTime = settings.ImageTime,
-                TransitionImageDuration = settings.TransitionImageDuration,
-                IsTimerVisible = settings.IsTimerVisible
-            });
+
         }
 
         private void InitializeViewModel()
@@ -52,6 +48,7 @@ namespace UiDesktopApp2.ViewModels.Pages
             IsTimerVisible = settings.IsTimerVisible;
 
             _isInitialized = true;
+            IsNewSettingsPending = false;
         }
 
         private string GetAssemblyVersion()
@@ -82,6 +79,51 @@ namespace UiDesktopApp2.ViewModels.Pages
                     CurrentTheme = ApplicationTheme.Dark;
 
                     break;
+            }
+        }
+
+        [RelayCommand]
+        private void OnSaveSettings()
+        {
+            settings.ImageTime = ImageTime;
+            settings.TransitionImageDuration = TransitionImageDuration;
+            settings.IsTimerVisible = IsTimerVisible;
+            _jsonReaderWriter.WriteData(new SettingsData()
+            {
+                ImageTime = settings.ImageTime,
+                TransitionImageDuration = settings.TransitionImageDuration,
+                IsTimerVisible = settings.IsTimerVisible
+            });
+            IsNewSettingsPending = false;
+        }
+
+        [RelayCommand]
+        private void OnResetDefaults()
+        {
+            ImageTime = 5;
+            TransitionImageDuration = 1;
+            IsTimerVisible = false;
+            settings.ImageTime = 5;
+            settings.TransitionImageDuration = 1;
+            settings.IsTimerVisible = false;
+            _jsonReaderWriter.WriteData(new SettingsData()
+            {
+                ImageTime = settings.ImageTime,
+                TransitionImageDuration = settings.TransitionImageDuration,
+                IsTimerVisible = settings.IsTimerVisible
+            });
+            IsNewSettingsPending = false;
+        }
+
+        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            base.OnPropertyChanged(e);
+
+            if (e.PropertyName is nameof(ImageTime) or
+                nameof(TransitionImageDuration) or
+                nameof(IsTimerVisible))
+            {
+                IsNewSettingsPending = true;
             }
         }
     }
