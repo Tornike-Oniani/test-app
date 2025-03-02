@@ -32,10 +32,7 @@ namespace UiDesktopApp2.Helpers
                 throw new FileNotFoundException("File was not found", filePath);
             }
             string data = File.ReadAllText(filePath);
-            if (String.IsNullOrEmpty(data))
-            {
-                throw new InvalidDataException("No entries were found");
-            }
+
             return JsonConvert.DeserializeObject<T>(data);
         }
     }
