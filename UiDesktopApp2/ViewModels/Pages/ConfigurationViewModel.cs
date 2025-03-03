@@ -179,7 +179,7 @@ namespace UiDesktopApp2.ViewModels.Pages
                     Id = 0,
                     TestId = id,
                     Name = imageSet.Name,
-                    IsKnown = imageSet.IsKnown,
+                    IsUknown = imageSet.IsUknown,
                     Images = new ObservableCollection<ImageVariantDTO>(imageVariantsCopy)
                 };
 

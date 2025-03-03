@@ -16,10 +16,10 @@ namespace UiDesktopApp2.Helpers
 
             if (bVal)
             {
-                return "Known";
+                return "Unknown";
             }
 
-            return "Unknown";
+            return "Known";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

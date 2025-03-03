@@ -58,10 +58,10 @@ namespace UiDesktopApp2.ViewModels.Pages
             {
                 string imageName = Result.ImageSetTimes[i].ImageSet.Name;
                 double imageRecognitionTime = Math.Round(Result.ImageSetTimes[i].Seconds, 2);
-                string isKnown = Result.ImageSetTimes[i].ImageSet.IsKnown ? "Known" : "Unknown";
+                string IsUknown = Result.ImageSetTimes[i].ImageSet.IsUknown ? "Unknown" : "Known";
                 AppendRow(resultBuilder, imageName);
                 AppendCell(resultBuilder, imageRecognitionTime.ToString());
-                AppendCell(resultBuilder, isKnown);
+                AppendCell(resultBuilder, IsUknown);
             }
 
             Clipboard.SetText(resultBuilder.ToString());
@@ -83,15 +83,15 @@ namespace UiDesktopApp2.ViewModels.Pages
         private void CalculateAvaregaRecognitionTimes()
         {
             AverageTimePerKnownImage = Math.Round(
-                Result.ImageSetTimes.Where(ist => ist.ImageSet.IsKnown).Sum(ist => ist.Seconds)
+                Result.ImageSetTimes.Where(ist => !ist.ImageSet.IsUknown).Sum(ist => ist.Seconds)
                 /
-                Result.ImageSetTimes.Count(ist => ist.ImageSet.IsKnown),
+                Result.ImageSetTimes.Count(ist => !ist.ImageSet.IsUknown),
                 2
                 );
             AverageTimePerUnkownImage = Math.Round(
-                Result.ImageSetTimes.Where(ist => !ist.ImageSet.IsKnown).Sum(ist => ist.Seconds)
+                Result.ImageSetTimes.Where(ist => ist.ImageSet.IsUknown).Sum(ist => ist.Seconds)
                 /
-                Result.ImageSetTimes.Count(ist => !ist.ImageSet.IsKnown),
+                Result.ImageSetTimes.Count(ist => ist.ImageSet.IsUknown),
                 2
                 );
         }

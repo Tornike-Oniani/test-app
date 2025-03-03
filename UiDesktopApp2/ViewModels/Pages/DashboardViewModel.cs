@@ -44,11 +44,17 @@ namespace UiDesktopApp2.ViewModels.Pages
         [RelayCommand]
         private void OnRunTest(Type type)
         {
-            this.SelectedTest.HasAlreadyRun = true;
+            if (SelectedTest == null)
+            {
+                return;
+            }
+
+            SelectedTest.HasAlreadyRun = true;
             GlobalState.TestToRun = SelectedTest;
             GlobalState.TestToRun.HasAlreadyRun = true;
             Window testWindow = new TestWindow(serviceProvider);
             testWindow.Show();
+
             return;
         }
         public void MoveItem(int oldIndex, int newIndex)

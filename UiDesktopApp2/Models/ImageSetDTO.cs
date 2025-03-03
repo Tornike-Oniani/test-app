@@ -15,7 +15,7 @@ namespace UiDesktopApp2.Models
         public int Id { get; set; }
         public int TestId { get; set; }
         public string? Name { get; set; }
-        public bool IsKnown { get; set; }
+        public bool IsUknown { get; set; }
         public ObservableCollection<ImageVariantDTO> Images { get; set; } = new ObservableCollection<ImageVariantDTO>();
     }
 }

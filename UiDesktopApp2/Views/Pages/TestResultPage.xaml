@@ -196,7 +196,7 @@
                                         Grid.Column="2"
                                         >
                                         <TextBlock
-                                            Text="{Binding ImageSet.IsKnown, Converter={StaticResource BoolToKnownUnknown}}"
+                                            Text="{Binding ImageSet.IsUknown, Converter={StaticResource BoolToKnownUnknown}}"
                                             FontSize="16"
                                             />
                                     </Border>

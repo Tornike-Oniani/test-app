@@ -177,8 +177,7 @@
                                     </ItemsControl>
                                 </Grid>
                                 <!-- Actions -->
-                                <Grid
-                                    Visibility="{Binding ElementName=TestToManagePage, Path=DataContext.ViewModel.HasTestAlreadyRun, Converter={StaticResource InverseBoolToVisibility}}"
+                                <Grid                                    
                                     Grid.Row="1"
                                     >
                                     <!--Add image button-->
@@ -187,6 +186,7 @@
                                         Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Page}}, Path=DataContext.ViewModel.AddImageVariantCommand}"
                                         CommandParameter="{Binding}"
                                         Appearance="Primary"
+                                        Visibility="{Binding ElementName=TestToManagePage, Path=DataContext.ViewModel.HasTestAlreadyRun, Converter={StaticResource InverseBoolToVisibility}}"
                                         HorizontalAlignment="Left"
                                         />
 
@@ -196,11 +196,12 @@
                                         >
                                         <!-- Unknown toggle -->
                                         <ui:ToggleSwitch
-                                            IsChecked="{Binding IsKnown}"
+                                            IsChecked="{Binding IsUknown}"
                                             Command="{Binding ElementName=TestToManagePage, Path=DataContext.ViewModel.ApplyUnknownStatusCommand}"
                                             CommandParameter="{Binding}"
-                                            OffContent="Unknown"
-                                            OnContent="Known"
+                                            OffContent="Known"
+                                            OnContent="Unknown"
+                                            IsEnabled="{Binding ElementName=TestToManagePage, Path=DataContext.ViewModel.HasTestAlreadyRun, Converter={StaticResource InverseBool}}"
                                             Margin="0 0 12 0"
                                             />
                                         <!-- Remove set -->
@@ -209,6 +210,7 @@
                                             Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Page}}, Path=DataContext.ViewModel.RemoveSetCommand}"
                                             CommandParameter="{Binding}"
                                             Appearance="Secondary"
+                                            Visibility="{Binding ElementName=TestToManagePage, Path=DataContext.ViewModel.HasTestAlreadyRun, Converter={StaticResource InverseBoolToVisibility}}"
                                             />
                                     </StackPanel>
                                 </Grid>
