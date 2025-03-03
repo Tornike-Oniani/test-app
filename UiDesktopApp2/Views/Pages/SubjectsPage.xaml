@@ -234,6 +234,7 @@
                                                 Content="{Binding Date}"
                                                 FontSize="16"
                                                 VerticalAlignment="Center"
+                                                Margin="0 6 0 0"
                                                 />
                                         </StackPanel>
                                         <!-- Actions -->
