@@ -8,7 +8,7 @@ using System.Windows.Data;
 
 namespace UiDesktopApp2.Helpers
 {
-    public class BoolToYesNoConverter : IValueConverter
+    public class BoolToKnownUnknownConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -16,10 +16,10 @@ namespace UiDesktopApp2.Helpers
 
             if (bVal)
             {
-                return "Yes";
+                return "Known";
             }
 
-            return "No";
+            return "Unknown";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

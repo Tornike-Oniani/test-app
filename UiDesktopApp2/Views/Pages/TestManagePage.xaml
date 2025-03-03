@@ -196,11 +196,11 @@
                                         >
                                         <!-- Unknown toggle -->
                                         <ui:ToggleSwitch
-                                            IsChecked="{Binding IsUnknown}"
+                                            IsChecked="{Binding IsKnown}"
                                             Command="{Binding ElementName=TestToManagePage, Path=DataContext.ViewModel.ApplyUnknownStatusCommand}"
                                             CommandParameter="{Binding}"
-                                            OffContent="Unknown set?"
-                                            OnContent="Unknown set?"
+                                            OffContent="Unknown"
+                                            OnContent="Known"
                                             Margin="0 0 12 0"
                                             />
                                         <!-- Remove set -->

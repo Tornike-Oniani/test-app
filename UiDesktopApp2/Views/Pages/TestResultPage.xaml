@@ -19,7 +19,7 @@
 
     <Page.Resources>
         <helpers:DoubleRounderConverter x:Key="DoubleRounder" />
-        <helpers:BoolToYesNoConverter x:Key="BoolToYesNo" />
+        <helpers:BoolToKnownUnknownConverter x:Key="BoolToKnownUnknown" />
     </Page.Resources>
     
     <StackPanel>
@@ -161,7 +161,7 @@
                                             Grid.Column="1"
                                             />
                                         <TextBlock
-                                            Text="IS UNKNOWN?"
+                                            Text="UNKNOWN STATUS"
                                             Grid.Column="2"
                                             />
                                     </Grid>
@@ -196,7 +196,7 @@
                                         Grid.Column="2"
                                         >
                                         <TextBlock
-                                            Text="{Binding ImageSet.IsUnknown, Converter={StaticResource BoolToYesNo}}"
+                                            Text="{Binding ImageSet.IsKnown, Converter={StaticResource BoolToKnownUnknown}}"
                                             FontSize="16"
                                             />
                                     </Border>

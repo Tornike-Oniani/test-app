@@ -52,16 +52,16 @@ namespace UiDesktopApp2.ViewModels.Pages
             AppendRow(resultBuilder, "");
             AppendRow(resultBuilder, "IMAGE");
             AppendCell(resultBuilder, "RECOGNITION TIME");
-            AppendCell(resultBuilder, "IS UNKNOWN?");
+            AppendCell(resultBuilder, "KNOWN SATUS?");
 
             for (int i = 0; i < Result.ImageSetTimes.Count; i++)
             {
                 string imageName = Result.ImageSetTimes[i].ImageSet.Name;
                 double imageRecognitionTime = Math.Round(Result.ImageSetTimes[i].Seconds, 2);
-                string isUnknown = Result.ImageSetTimes[i].ImageSet.IsUnknown ? "Yes" : "No";
+                string isKnown = Result.ImageSetTimes[i].ImageSet.IsKnown ? "Known" : "Unknown";
                 AppendRow(resultBuilder, imageName);
                 AppendCell(resultBuilder, imageRecognitionTime.ToString());
-                AppendCell(resultBuilder, isUnknown);
+                AppendCell(resultBuilder, isKnown);
             }
 
             Clipboard.SetText(resultBuilder.ToString());
@@ -83,15 +83,15 @@ namespace UiDesktopApp2.ViewModels.Pages
         private void CalculateAvaregaRecognitionTimes()
         {
             AverageTimePerKnownImage = Math.Round(
-                Result.ImageSetTimes.Where(ist => !ist.ImageSet.IsUnknown).Sum(ist => ist.Seconds)
+                Result.ImageSetTimes.Where(ist => ist.ImageSet.IsKnown).Sum(ist => ist.Seconds)
                 /
-                Result.ImageSetTimes.Count(ist => !ist.ImageSet.IsUnknown),
+                Result.ImageSetTimes.Count(ist => ist.ImageSet.IsKnown),
                 2
                 );
             AverageTimePerUnkownImage = Math.Round(
-                Result.ImageSetTimes.Where(ist => ist.ImageSet.IsUnknown).Sum(ist => ist.Seconds)
+                Result.ImageSetTimes.Where(ist => !ist.ImageSet.IsKnown).Sum(ist => ist.Seconds)
                 /
-                Result.ImageSetTimes.Count(ist => ist.ImageSet.IsUnknown),
+                Result.ImageSetTimes.Count(ist => !ist.ImageSet.IsKnown),
                 2
                 );
         }
