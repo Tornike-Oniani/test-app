@@ -15,7 +15,7 @@
       ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
       ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-      ScrollViewer.CanContentScroll="False">
+      ScrollViewer.CanContentScroll="True">
 
     <Page.Resources>
         <helpers:SubtractConverter x:Key="Subtract" />

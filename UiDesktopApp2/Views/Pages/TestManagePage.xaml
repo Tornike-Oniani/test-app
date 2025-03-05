@@ -76,10 +76,11 @@
                                 Height="25" 
                                 Fill="{ui:ThemeResource AccentTextFillColorPrimaryBrush}" 
                                 />
+                            <!-- Text="{Binding RelativeSource={RelativeSource AncestorType=ContentPresenter}, Path=(ItemsControl.AlternationIndex), Converter={StaticResource AddOne}}" -->
                             <TextBlock 
-                                Text="{Binding RelativeSource={RelativeSource AncestorType=ContentPresenter}, Path=(ItemsControl.AlternationIndex), Converter={StaticResource AddOne}}"
+                                Text="{Binding Number}"
                                 FontSize="14"
-                                Foreground="White"
+                                Foreground="#ffffff"
                                 HorizontalAlignment="Center" 
                                 VerticalAlignment="Center" 
                                 />

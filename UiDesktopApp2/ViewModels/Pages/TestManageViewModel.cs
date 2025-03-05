@@ -35,7 +35,8 @@ namespace UiDesktopApp2.ViewModels.Pages
         {
             ImageSetDTO imageSet = new ImageSetDTO()
             {
-                TestId = GlobalState.TestToManage.Id
+                TestId = GlobalState.TestToManage.Id,
+                Number = GlobalState.TestToManage.ImageSets.Count + 1
             };
             int id = await imageSetRepo.CreateImageSet(imageSet);
             imageSet.Id = id;
