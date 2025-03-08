@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using System.Collections.ObjectModel;
 using System.IO;
 using UiDesktopApp2.DataAccess.Repositories;
 using UiDesktopApp2.Helpers;
@@ -165,6 +166,108 @@ namespace UiDesktopApp2.ViewModels.Pages
         private async Task OnApplyUnknownStatus(ImageSetDTO imageSet)
         {
             await imageSetRepo.UpdateImageSet(imageSet);
+        }
+        [RelayCommand]
+        private void OnEnterNumberEditMode(ImageSetDTO imageSet)
+        {
+            imageSet.IsNumberInEditMode = true;
+            imageSet.IsEditModeFocused = true;
+        }
+        [RelayCommand]
+        private void OnExitNumberEditMode(ImageSetDTO imageSet)
+        {
+            imageSet.IsNumberInEditMode = false;
+            imageSet.IsEditModeFocused = false;
+        }
+        [RelayCommand]
+        private async Task OnChangeNumber(object parameter)
+        {
+            if (parameter is object[] parameters && parameters.Length == 2)
+            {
+                ImageSetDTO imageSet = parameters[0] as ImageSetDTO;
+                string input = parameters[1] as string;
+                int newNumber;
+                ObservableCollection<ImageSetDTO> imageSets = GlobalState.TestToManage.ImageSets;
+
+                if (!int.TryParse(input, out newNumber))
+                {
+                    return;
+                }
+
+                if (newNumber > imageSets.Count || newNumber < 1)
+                {
+                    return;
+                }
+
+                // Find the imageset at the new index
+                ImageSetDTO targetImageSet = imageSets[newNumber - 1];
+                targetImageSet.Number = imageSet.Number;
+                imageSet.Number = newNumber;
+                SwapItems<ImageSetDTO>(imageSets, newNumber - 1, targetImageSet.Number - 1);
+
+                imageSet.IsNumberInEditMode = false;
+                imageSet.IsEditModeFocused = false;
+
+                await testRepo.UpdateTest(GlobalState.TestToManage);
+                return;
+            }
+
+            throw new ArgumentException("Invalid argument");
+        }
+        [RelayCommand]
+        private async Task OnMoveUp(ImageSetDTO imageSet)
+        {
+            if (imageSet.Number <= 1)
+            {
+                return;
+            }
+
+            ObservableCollection<ImageSetDTO> imageSets = GlobalState.TestToManage.ImageSets;
+            int newNumber = imageSet.Number - 1;
+            ImageSetDTO targetImageSet = imageSets[newNumber - 1];
+            targetImageSet.Number = imageSet.Number;
+            imageSet.Number = newNumber;
+            SwapItems<ImageSetDTO>(imageSets, newNumber - 1, targetImageSet.Number - 1);
+
+            await testRepo.UpdateTest(GlobalState.TestToManage);
+        }
+        [RelayCommand]
+        private async Task OnMoveDown(ImageSetDTO imageSet)
+        {
+            ObservableCollection<ImageSetDTO> imageSets = GlobalState.TestToManage.ImageSets;
+
+            if (imageSet.Number >= imageSets.Count)
+            {
+                return;
+            }
+
+            int newNumber = imageSet.Number + 1;
+            ImageSetDTO targetImageSet = imageSets[newNumber - 1];
+            targetImageSet.Number = imageSet.Number;
+            imageSet.Number = newNumber;
+            SwapItems<ImageSetDTO>(imageSets, newNumber - 1, targetImageSet.Number - 1);
+
+            await testRepo.UpdateTest(GlobalState.TestToManage);
+        }
+        #endregion
+
+        #region Private helpers
+        void SwapItems<T>(ObservableCollection<T> collection, int index1, int index2)
+        {
+            if (index1 >= 0 && index1 < collection.Count && index2 >= 0 && index2 < collection.Count && index1 != index2)
+            {
+                collection.Move(index1, index2);
+
+                // Adjust the second move to account for index shift
+                if (index2 > index1)
+                {
+                    collection.Move(index2 - 1, index1);
+                }
+                else
+                {
+                    collection.Move(index2 + 1, index1);
+                }
+            }
         }
         #endregion
     }

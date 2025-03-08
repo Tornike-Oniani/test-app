@@ -33,7 +33,6 @@
         </Grid.RowDefinitions>
         <ItemsControl
             ItemsSource="{Binding ViewModel.GlobalState.TestToManage.ImageSets}"
-            AlternationCount="500"
             >
             <ItemsControl.ItemContainerStyle>
                 <Style TargetType="{x:Type ContentPresenter}">
@@ -43,14 +42,6 @@
             <ItemsControl.Template>
                 <ControlTemplate TargetType="{x:Type ItemsControl}">
                     <Grid>
-                        <!-- Line -->
-                        <Border
-                            BorderThickness="2 0 0 0"
-                            BorderBrush="{ui:ThemeResource AccentTextFillColorPrimaryBrush}"
-                            Height="{Binding ElementName=Presenter, Path=ActualHeight, Converter={StaticResource Subtract}, ConverterParameter=156}"
-                            VerticalAlignment="Top"
-                            Margin="12 66 0 0"
-                            />
                         <ItemsPresenter 
                             VerticalAlignment="Top"
                             x:Name="Presenter"
@@ -61,40 +52,93 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <!--Number-->
-                        <Grid
-                            Margin="0 0 24 0"
-                            Height="85"
-                            Grid.Column="0"
-                            >
-                            <Ellipse 
-                                Width="25" 
-                                Height="25" 
-                                Fill="{ui:ThemeResource AccentTextFillColorPrimaryBrush}" 
-                                />
-                            <!-- Text="{Binding RelativeSource={RelativeSource AncestorType=ContentPresenter}, Path=(ItemsControl.AlternationIndex), Converter={StaticResource AddOne}}" -->
-                            <TextBlock 
-                                Text="{Binding Number}"
-                                FontSize="14"
-                                Foreground="#ffffff"
-                                HorizontalAlignment="Center" 
-                                VerticalAlignment="Center" 
-                                />
-                        </Grid>
                         <!-- Body -->
                         <ui:Card
+                            Focusable="True"
                             Grid.Column="1"                            
                             >
                             <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*" />
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
+                                <!-- Number -->
                                 <Grid
+                                    Margin="0 0 24 0"
+                                    Grid.Column="0"
+                                    Grid.Row="0"
+                                    Grid.RowSpan="2"
+                                    >
+                                    <StackPanel
+                                        VerticalAlignment="Center" 
+                                        Visibility="{Binding Path=ViewModel.HasTestAlreadyRun, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:TestManagePage}, Converter={StaticResource InverseBoolToVisibility}}"
+                                        >
+                                        <!-- Move up button -->
+                                        <ui:Button
+                                            Icon="{ui:SymbolIcon ArrowUp24}"
+                                            Command="{Binding Path=ViewModel.MoveUpCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:TestManagePage}}"
+                                            CommandParameter="{Binding}"
+                                            Margin="0 0 0 6"
+                                            />
+                                        <!-- Number button -->
+                                        <Grid
+                                            Margin="0 0 0 6"
+                                            >
+                                            <ui:Button
+                                                Content="{Binding Number}"                                           
+                                                Appearance="Primary"
+                                                Cursor="Hand"
+                                                Visibility="{Binding IsNumberInEditMode, Converter={StaticResource InverseBoolToVisibility}}"
+                                                Command="{Binding Path=ViewModel.EnterNumberEditModeCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:TestManagePage}}"
+                                                CommandParameter="{Binding}"
+                                                HorizontalAlignment="Stretch"
+                                                />
+                                            <TextBox
+                                                Text="{Binding Number, Mode=OneWay}"
+                                                Visibility="{Binding IsNumberInEditMode, Converter={StaticResource BoolToVisibility}}"
+                                                helpers:ElementFocusExtension.IsFocused="{Binding IsEditModeFocused}"
+                                                >
+                                                <TextBox.InputBindings>
+                                                    <KeyBinding 
+                                                        Key="Esc" 
+                                                        Command="{Binding Path=ViewModel.ExitNumberEditModeCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:TestManagePage}}"
+                                                        CommandParameter="{Binding}"
+                                                        />
+                                                    <KeyBinding
+                                                        Key="Enter"
+                                                        Command="{Binding Path=ViewModel.ChangeNumberCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:TestManagePage}}"
+                                                        >
+                                                        <KeyBinding.CommandParameter>
+                                                            <MultiBinding Converter="{StaticResource MultiParameter}">
+                                                                <Binding Path="." />
+                                                                <Binding Path="Text" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type TextBox}}" />
+                                                            </MultiBinding>
+                                                        </KeyBinding.CommandParameter>
+                                                    </KeyBinding>
+                                                </TextBox.InputBindings>
+                                            </TextBox>
+                                        </Grid>
+                                        <!-- Move down button -->
+                                        <ui:Button
+                                            Icon="{ui:SymbolIcon ArrowDown24}"
+                                            Command="{Binding Path=ViewModel.MoveDownCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:TestManagePage}}"
+                                            CommandParameter="{Binding}"
+                                            />
+                                    </StackPanel>
+                                    <ui:Button
+                                        Content="{Binding Number}"                                           
+                                        Appearance="Primary"
+                                        VerticalAlignment="Center"
+                                        Visibility="{Binding Path=ViewModel.HasTestAlreadyRun, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:TestManagePage}, Converter={StaticResource BoolToVisibility}}"
+                                        />
+                                </Grid>
+                                <!-- Images -->
+                                <Grid
+                                    Grid.Column="1"
                                     Grid.Row="0"
                                     Margin="0 0 0 8"
                                     >
@@ -102,13 +146,11 @@
                                         Text="Empty set..."
                                         Visibility="{Binding Images.Count, Converter={StaticResource ZeroToVisibility}, ConverterParameter=Inverse}"
                                         VerticalAlignment="Center"
-                                        Margin="12 0 0 0"
                                         />
                                     <!--List of images-->
                                     <ItemsControl
                                         ItemsSource="{Binding Images}"
                                         Visibility="{Binding Images.Count, Converter={StaticResource ZeroToVisibility}}"
-                                        MinHeight="59"
                                         >
                                         <ItemsControl.ItemContainerStyle>
                                             <Style TargetType="{x:Type ContentPresenter}">
@@ -178,7 +220,8 @@
                                     </ItemsControl>
                                 </Grid>
                                 <!-- Actions -->
-                                <Grid                                    
+                                <Grid
+                                    Grid.Column="1"
                                     Grid.Row="1"
                                     >
                                     <!--Add image button-->

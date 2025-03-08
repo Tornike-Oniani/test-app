@@ -143,9 +143,11 @@
                                             </Grid.RowDefinitions>
                                             <ui:Button
                                                 Icon="{ui:SymbolIcon MoreVertical24}"
+                                                Appearance="Secondary"
+                                                Height="32"
                                                 Command="{Binding Path=ViewModel.OpenFlyoutCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:ConfigurationPage}}"
                                                 CommandParameter="{Binding}"
-                                                VerticalAlignment="Center"
+                                                VerticalAlignment="Stretch"
                                                 Margin="0 0 0 -16"
                                                 Grid.Row="0"
                                                 />
@@ -179,6 +181,13 @@
                                                     <ui:Button
                                                         Content="Delete"
                                                         Command="{Binding Path=ViewModel.DeleteTestCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:ConfigurationPage}}"
+                                                        CommandParameter="{Binding}"
+                                                        Margin="0 0 0 6"
+                                                        />
+                                                    <!-- Shuffle button -->
+                                                    <ui:Button
+                                                        Content="Shuffle"
+                                                        Command="{Binding Path=ViewModel.ShuffleTestCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:ConfigurationPage}}"
                                                         CommandParameter="{Binding}"
                                                         />
                                                 </StackPanel>

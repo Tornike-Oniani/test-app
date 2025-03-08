@@ -199,7 +199,7 @@ namespace UiDesktopApp2.ViewModels.Pages
                 new SimpleContentDialogCreateOptions()
                 {
                     Title = "Delete test",
-                    Content = $"Are you sure you want to delete '{test.Name}'? It will also delete corresponding results.",
+                    Content = $"Are you sure you want to delete '{test.Name}'?\nIt will also delete corresponding results.",
                     PrimaryButtonText = "Delete",
                     CloseButtonText = "Cancel"
                 }
@@ -211,6 +211,35 @@ namespace UiDesktopApp2.ViewModels.Pages
                 await _testRepo.DeleteTestById(test.Id);
                 GlobalState.Tests.Remove(test);
             }
+        }
+
+        [RelayCommand]
+        private async Task OnShuffleTest(TestDTO test)
+        {
+            ContentDialogResult result = await _contentDialogService.ShowSimpleDialogAsync(
+                new SimpleContentDialogCreateOptions()
+                {
+                    Title = "Shuffle test",
+                    Content = $"Are you sure you want to shuffle '{test.Name}' randomly?",
+                    PrimaryButtonText = "Shuffle",
+                    CloseButtonText = "Cancel"
+                }
+            );
+
+            if (result == ContentDialogResult.Primary)
+            {
+                // Shuffle image sets
+                Shuffle<ImageSetDTO>(test.ImageSets);
+
+                // Assign numbers
+                for (int i = 0; i < test.ImageSets.Count; i++)
+                {
+                    test.ImageSets[i].Number = i + 1;
+                }
+
+                await _testRepo.UpdateTest(test);
+            }
+
         }
         #endregion
 
@@ -233,6 +262,28 @@ namespace UiDesktopApp2.ViewModels.Pages
         public void OnNavigatedFrom()
         {
 
+        }
+        #endregion
+
+        #region Private helpers
+        private void Shuffle<T>(ObservableCollection<T> collection)
+        {
+            Random rng = new Random();
+
+            List<T> list = collection.ToList(); // Copy to a list
+            int n = list.Count;
+
+            for (int i = n - 1; i > 0; i--)
+            {
+                int j = rng.Next(i + 1);
+                (list[i], list[j]) = (list[j], list[i]); // Swap
+            }
+
+            collection.Clear();
+            foreach (var item in list)
+            {
+                collection.Add(item); // Re-add shuffled items
+            }
         }
         #endregion
     }
